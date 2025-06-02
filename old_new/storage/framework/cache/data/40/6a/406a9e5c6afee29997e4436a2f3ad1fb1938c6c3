@@ -1,0 +1,99 @@
+9999999999s:2244:"body{
+                                                                                                                        }
+
+    .banner-section-five .content-column h1 {
+    font-size: 46px !important;
+    line-height: 60px !important;
+    color: #202124 !important;
+    font-weight: 500 !important;
+    margin-bottom: 25px !important;
+}
+
+.banner-section-five .content-column h1 .colored {
+    color: #01417E !important;
+}
+.blog-single .main-image {
+    max-width: 700px !important;
+    margin: auto;
+}
+.blog-single p {
+    font-size: 16px !important;
+    color: #363636 !important;
+}
+.bravo-news .blog-content li {
+    margin-bottom: 10px !important;
+}
+.checkboxes label:before {
+    background-color: #f0f5f7 !important;
+    border: 1px solid #c1c1c1 !important;
+}
+a {
+    color: #01417e;
+}
+.input-search .bravo-autocomplete, .smart-search .bravo-autocomplete {
+    max-height: 215px !important;
+    z-index: 9999 !important;
+}
+.job-detail-section .job-detail ul, .job-detail-section .job-detail li {
+    list-style: inside !important;
+    margin: 0;
+    color: #202124;
+}
+.job-detail p {
+    position: relative;
+    color: #202124;
+    margin-bottom: 15px !important;
+    font-size: 16px !important;
+}
+.checkboxes label:before {
+    color: #01417e !important;
+}
+@media (max-width:560px){
+    .banner-section-five .content-column .inner-column {
+	padding: 150px 0 50px !important;
+}
+.app-section .content-column .inner-column {
+	padding: 0;
+}
+.about-section .image-column {
+	margin-bottom: 50px;
+}
+   .call-to-action .outer-box {
+	padding: 50px 30px 30px;
+}
+.call-to-action .image-column {
+	position: relative;
+	height: 250px;
+	right:0;
+	width: 100%;
+}
+.call-to-action .content-column {
+	margin-right: 0px;
+}
+.call-to-action-four .image {
+	position: relative;
+	right: 0px !important;
+	top: 0;
+	height: 250px;
+	width: 100% !important;
+}
+.call-to-action-four {
+	padding: 30px !important;
+}
+
+}
+.company-widget .social-links a:hover {
+	color: #01417D;
+}
+.company-widget .btn-box .theme-btn {
+	word-break: break-word;
+	white-space: inherit ;
+}
+@media(min-width:768px){
+.news-block .inner-box {
+    height: 100%;
+    min-height: 470px;
+}
+}
+    
+";

@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /user/
+Disallow: /login
+Disallow: /register
+Disallow: /password/reset
+
+User-agent: *
+Allow: /
+
+Sitemap: https://jobsning.com/sitemap.xml
