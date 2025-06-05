@@ -304,6 +304,14 @@ class JobController extends AdminController
         return view('Job::admin.job.all-applicants', $data);
     }
 
+    public function removeApplicant(Request $request) {
+        dd($request->all());
+        $data = JobCandidate::find($id);
+        $data->delete();
+
+        return redirect()->route('job.admin.allApplicants')->with('success', 'Delete applicant successfully');
+    }
+
     public function applicantsChangeStatus($status, $id){
         $this->checkPermission('job_manage');
 
@@ -321,7 +329,7 @@ class JobController extends AdminController
             return redirect()->back()->with('error', __('Item not found!'));
         }
         $old_status = $row->status;
-        if($status != 'approved' && $status != 'rejected'){
+        if($status != 'approved' && $status != 'rejected' && $status != 'hired'){
             return redirect()->back()->with('error', __('Status unavailable'));
         }
         $row->status = $status;

@@ -26,4 +26,5 @@ Route::get('/my-applied/delete/{id}','CandidateController@deleteJobApplied')->na
 Route::get('/my-contact','CandidateController@myContact')->name('candidate.admin.myContact');
 
 
-Route::get('/resume-build','CandidateController@resumeBuild')->name('candidate.admin.resume.index');
+Route::get('/resume-build','CandidateController@resumeBuild')->name('candidate.admin.resume.form');
+Route::get('/resume','CandidateController@resumeStore')->name('candidate.admin.resume.index');

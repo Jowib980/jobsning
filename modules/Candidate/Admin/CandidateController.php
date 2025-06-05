@@ -265,4 +265,8 @@ class CandidateController extends AdminController
         return view('Candidate::admin.resume.form');
     }
 
+    public function resumeStore(Request $request) {
+        return view('Candidate::admin.resume.index');
+    }
+
 }

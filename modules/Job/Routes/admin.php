@@ -25,3 +25,6 @@ Route::get('/category/getForSelect2','JobCategoryController@getForSelect2')->nam
 Route::get('/category/edit/{id}','JobCategoryController@edit')->name('job.admin.category.edit');
 Route::post('/category/store/{id}','JobCategoryController@store')->name('job.admin.category.store');
 Route::post('/category/bulkEdit','JobCategoryController@bulkEdit')->name('job.admin.category.bulkEdit');
+
+
+Route::post('/applicant','JobController@removeApplicant')->name('job.admin.removeApplicant');

@@ -101,12 +101,27 @@ class CompanyController extends FrontendController
             return redirect('/');
         }
         $translation = $row->translateOrOrigin(app()->getLocale());
-        if($row && !empty($row->email) && setting_item_with_lang('enable_hide_email_company'))
-        {
-            $email_e = explode("@",$row->email);
-            if(isset($email_e[0]) && isset($email_e[1]))
+        
+        if (!auth()->check()) {
+            if($row && !empty($row->email) && setting_item_with_lang('enable_hide_email_company'))
             {
-                $row->email = '*****@'.$email_e[1];
+                $email_e = explode("@",$row->email);
+                if(isset($email_e[0]) && isset($email_e[1]))
+                {
+                    $row->email = '*****@'.$email_e[1];
+                }
+            }
+            if($row && !empty($row->phone))
+            {
+                $phone_e = $row->phone;
+                $length = strlen($phone_e);
+                if($length > 2) {
+                    $masked = str_repeat('*', $length - 2) . substr($phone_e, -2);
+                } else {
+                    $maaked = str_repeat('*', $length - 2);
+                }
+
+                $row->phone = $masked;
             }
         }
         $data = [
@@ -217,7 +232,6 @@ class CompanyController extends FrontendController
                     'type' => 'contact_form',
                     'message' => __(':name have sent a contact to you', ['name' => $contact->name ?? ''])
                 ];
-
                 $userNotify->notify(new PrivateChannelServices($data));
             }catch (Exception $exception){
                 Log::warning("Contact Company Send Mail: ".$exception->getMessage());

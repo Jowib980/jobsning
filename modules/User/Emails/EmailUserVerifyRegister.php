@@ -93,7 +93,7 @@
 
 		public function buttonVerify()
 		{
-			$text = __('Verify Email Address');
+			$text = __('Confirm your details');
 			$button = '<a style="border-radius: 3px;
                 color: #fff;
                 display: inline-block;
