@@ -255,9 +255,14 @@ class CandidateController extends AdminController
             }
         }
 
+
         return response()->json([
             'results' => $data
         ]);
+    }
+
+    public function resumeBuild(Request $request) {
+        return view('Candidate::admin.resume.form');
     }
 
 }

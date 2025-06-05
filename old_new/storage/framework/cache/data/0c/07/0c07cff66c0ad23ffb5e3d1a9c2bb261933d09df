@@ -1,7 +1,0 @@
-9999999999s:195:"<script>
-	jQuery(document).ready(function () {
-   jQuery('.list-brands .sponsors-carousel .image-box a').click(function(){
-       jQuery(this).attr('target','_blank')
-      })
-});
-</script>";

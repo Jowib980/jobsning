@@ -54,6 +54,11 @@ class ModuleProvider extends ModuleServiceProvider
                         'url'        => route('candidate.admin.category.index'),
                         'title'      => __("Category"),
                         'permission' => 'category_manage_others'
+                    ],
+                    'resume_build' => [
+                        'url' => route('candidate.admin.resume.index'),
+                        'title' => _("Resume Builder"),
+                        'permission' => 'candidate_manage',
                     ]
                 ]
             ],

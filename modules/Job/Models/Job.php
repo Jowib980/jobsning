@@ -2,7 +2,7 @@
 namespace Modules\Job\Models;
 
 use App\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Modules\Company\Models\Company;
 use Modules\Location\Models\Location;
@@ -12,7 +12,7 @@ use Modules\Job\Models\JobCategory as Category;
 
 class Job extends BaseModel
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     protected $table = 'bc_jobs';
     protected $fillable = [
         'title',

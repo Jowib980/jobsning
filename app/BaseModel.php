@@ -393,14 +393,25 @@ class BaseModel extends Model
 
         if (is_employer()){
             $company_id = ($user->company) ? $user->company->id : '';
+            // dd($company_id);
+            // $jobs = Job::query();
+            // if ($company_id) $jobs->where('company_id',$company_id);
+            // $jobs->where('create_user',Auth::id())->whereNull('company_id');
+
             $jobs = Job::query();
-            if ($company_id) $jobs->where('company_id',$company_id);
-            $jobs->where('create_user',Auth::id())->whereNull('company_id');
+
+            if ($company_id) {
+                $jobs->where('company_id', $company_id);
+            } else {
+                $jobs->where('create_user', Auth::id())->whereNull('company_id');
+            }
+
             $totalJob = $jobs->count();
 
             $totalApplication = JobCandidate::whereHas('jobInfo',function ($q) use($company_id){
                 if( $company_id ) $q->where('company_id', $company_id);
             })->count();
+
 
             $res[] = [
                 'size'   => 6,

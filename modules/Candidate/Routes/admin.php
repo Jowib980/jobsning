@@ -24,3 +24,6 @@ Route::get('/my-applied','CandidateController@myApplied')->name('candidate.admin
 Route::get('/my-applied/delete/{id}','CandidateController@deleteJobApplied')->name('candidate.admin.myApplied.delete');
 
 Route::get('/my-contact','CandidateController@myContact')->name('candidate.admin.myContact');
+
+
+Route::get('/resume-build','CandidateController@resumeBuild')->name('candidate.admin.resume.index');
