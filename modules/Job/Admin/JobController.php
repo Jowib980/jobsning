@@ -102,7 +102,8 @@ class JobController extends AdminController
                     'class' => 'active'
                 ],
             ],
-            'translation' => new JobTranslation()
+            'translation' => new JobTranslation(),
+            'countries' => \Nnjeim\World\Models\Country::all()
         ];
         return view('Job::admin.job.detail', $data);
     }
@@ -122,6 +123,20 @@ class JobController extends AdminController
             return redirect(route('job.admin.index'));
         }
 
+
+        // Preload location relationships
+        $selected_country_id = $row->country_id;
+        $selected_state_id = $row->state_id;
+
+        $states = $selected_country_id
+            ? \Nnjeim\World\Models\State::where('country_id', $selected_country_id)->get()
+            : collect();
+
+        $cities = $selected_state_id
+            ? \Nnjeim\World\Models\City::where('state_id', $selected_state_id)->get()
+            : collect();
+
+
         $data = [
             'row'  => $row,
             'translation'  => $translation,
@@ -139,7 +154,9 @@ class JobController extends AdminController
                     'name'  => $row->title,
                     'class' => 'active'
                 ],
-            ],
+            ],'countries' => \Nnjeim\World\Models\Country::all(),
+        'states' => $states,
+        'cities' => $cities,'countries' => \Nnjeim\World\Models\Country::all()
         ];
         return view('Job::admin.job.detail', $data);
     }
@@ -177,6 +194,8 @@ class JobController extends AdminController
             'category_id',
             'thumbnail_id',
             'location_id',
+            'country_id',
+            'state_id',
             'company_id',
             'job_type_id',
             'expiration_date',

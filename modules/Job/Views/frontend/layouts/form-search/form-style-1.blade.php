@@ -1,4 +1,4 @@
-<form method="get" action="{{ (!empty($category) || !empty($location)) ? route('job.search') : request()->fullUrl() }}" >
+<form method="get" action="{{ (!empty($category) || !empty($country)) ? route('job.search') : request()->fullUrl() }}" >
     @php
     $job_sidebar_search_fields = setting_item_array('job_sidebar_search_fields');
     $job_sidebar_search_fields = array_values(\Illuminate\Support\Arr::sort($job_sidebar_search_fields, function ($value) {

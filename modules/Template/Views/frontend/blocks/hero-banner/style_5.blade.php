@@ -1,7 +1,7 @@
 <section class="banner-section-five">
     <div class="auto-container">
         <div class="row">
-            <div class="content-column col-lg-7 col-md-12 col-sm-12">
+            <div class="content-column col-lg-8 col-md-12 col-sm-12">
                 <div class="inner-column wow fadeInUp"  data-wow-delay="500ms">
                     <div class="title-box">
                         <h3>{!! @clean($title) !!}</h3>
@@ -12,7 +12,7 @@
                     <div class="job-search-form">
                         <form method="get" action="{{ route('job.search') }}">
                             <div class="row">
-                                <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                                <div class="form-group col-lg-2 col-md-12 col-sm-12">
                                     <span class="icon flaticon-search-1"></span>
                                     <input type="text" name="s" placeholder="{{ __("Job title...") }}">
                                 </div>
@@ -72,8 +72,15 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-lg-3">
-                                    <select id="city_select" name="location" class="form-control">
+                                 <div class="form-group col-lg-3">
+                                    <select id="state_select" name="state" class="form-control">
+                                        <option value="">{{ __("Select State") }}</option>
+                                        {{-- Options will be populated dynamically --}}
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-lg-2">
+                                    <select id="city_select" name="city" class="form-control">
                                         <option value="">{{ __("Select City") }}</option>
                                         {{-- Options will be populated dynamically --}}
                                     </select>
@@ -90,7 +97,7 @@
                 </div>
             </div>
 
-            <div class="image-column col-lg-5 col-md-12">
+            <div class="image-column col-lg-4 col-md-12">
                 <div class="image-box">
                     <div class="row">
                         @if(!empty($banner_image))
@@ -133,7 +140,7 @@
 </section>
 
 
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const countrySelect = document.getElementById('country_select');
         const citySelect = document.getElementById('city_select');
@@ -153,6 +160,39 @@
                         citySelect.appendChild(option);
                     });
                 });
+        });
+    });
+</script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#country_select').on('change', function () {
+            let countryId = $(this).val();
+            $('#state_select').empty().append('<option value="">Select State</option>');
+            $('#city_select').empty().append('<option value="">Select City</option>');
+            if (countryId) {
+                fetch(`/get-states/${countryId}`)
+                    .then(response => response.json())
+                    .then(states => {
+                        states.forEach(state => {
+                            $('#state_select').append(`<option value="${state.id}">${state.name}</option>`);
+                        });
+                    });
+            }
+        });
+
+        $('#state_select').on('change', function () {
+            let stateId = $(this).val();
+            $('#city_select').empty().append('<option value="">Select City</option>');
+            if (stateId) {
+                fetch(`/get-cities/${stateId}`)
+                    .then(response => response.json())
+                    .then(cities => {
+                        cities.forEach(city => {
+                            $('#city_select').append(`<option value="${city.id}">${city.name}</option>`);
+                        });
+                    });
+            }
         });
     });
 </script>

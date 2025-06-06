@@ -1,116 +1,226 @@
 @php
     $country_search_style = setting_item('job_country_search_style');
     $country_id = request()->get('country');
-    $city_id = request()->get('location');
+    $state_id = request()->get('state');
+    $city_id = request()->get('city');
 @endphp
 
 @if($countries)
     <!-- Country Filter -->
-    <div class="filter-block">
-        <h4>Country</h4>
+<div class="filter-block">
+    <h4>Country</h4>
+    @php
+        $country_name = "";
+        $list_json = [];
+        foreach ($countries as $country) {
+            if ($country_id == $country->id) {
+                $country_name = $country->name;
+            }
+            $list_json[] = [
+                'id' => $country->id,
+                'title' => $country->name,
+            ];
+        }
+    @endphp
 
-        @if($country_search_style == 'autocomplete' && $country_id != null)
-            @php
-                $country_name = "";
-                $list_json = [];
-
-                foreach ($countries as $country) {
-                    if ($country_id == $country->id) {
-                        $country_name = $country->name;
-                    }
-                    $list_json[] = [
-                        'id' => $country->id,
-                        'title' => $country->name,
-                    ];
-                }
-            @endphp
-
-            <div class="form-group smart-search">
-                <input type="text"
-                       class="smart-search-country parent_text form-control"
-                       placeholder="{{ __('Choose a country') }}"
-                       value="{{ $country_name }}"
-                       data-onLoad="{{ __('Loading...') }}"
-                       data-default="{{ json_encode($list_json) }}"
-                       id="countrySearchInput">
-                <input type="hidden" class="child_id" name="country" value="{{ $country_id }}" id="countryInput">
-                <span class="icon flaticon-map-locator"></span>
-            </div>
-        @elseif($country_search_style == 'autocomplete' && $country_id == null)
-            <div class="form-group bc-select-has-delete">
-                <select class="chosen-select" name="country" id="countrySelect">
-                    <option value="">{{ __('Choose a country') }}</option>
-                    @foreach ($countries as $country)
-                        <option value="{{ $country->id }}" {{ $country_id == $country->id ? 'selected' : '' }}>
-                            {{ $country->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <span class="icon flaticon-map-locator"></span>
-            </div>
-        @endif
+    <div class="form-group">
+         <select class="form-control" name="country" id="countrySelect">
+            <option value="">{{ __('Choose a country') }}</option>
+            @foreach($countries as $country)
+                <option value="{{ $country->id }}" {{ $country_id == $country->id ? 'selected' : '' }}>
+                    {{ $country->name }}
+                </option>
+            @endforeach
+        </select>
+        <span class="icon flaticon-map-locator"></span>
+       <!--  <input type="text"
+               class="smart-search-country parent_text form-control"
+               placeholder="{{ __('Choose a country') }}"
+               value="{{ $country_name }}"
+               data-onLoad="{{ __('Loading...') }}"
+               data-default="{{ json_encode($list_json) }}"
+               id="countrySearchInput">
+        <input type="hidden" class="child_id" name="country" value="{{ $country_id }}" id="countryInput">
+        <span class="icon flaticon-map-locator"></span> -->
     </div>
+</div>
 
-    <!-- City Filter -->
-    <div class="filter-block">
-        <h4>City</h4>
-
-        <div class="form-group bc-select-has-delete">
-            <select class="chosen-container chosen-container-single chosen-container-single-nosearch" name="location" id="citySelect">
-                <option value="">{{ __('Choose a city') }}</option>
-                {{-- Cities will be populated via JS --}}
-            </select>
-            <span class="icon flaticon-map-locator"></span>
-        </div>
+<!-- State Filter -->
+<div class="filter-block">
+    <h4>State</h4>
+    <div class="form-group bc-select-has-delete">
+        <select class="form-control" name="state" id="stateSelect">
+            <option value="">{{ __('Choose a state') }}</option>
+            {{-- States will be populated via JS --}}
+        </select>
+        <span class="icon flaticon-map-locator"></span>
     </div>
+</div>
+
+<!-- City Filter -->
+<div class="filter-block">
+    <h4>City</h4>
+    <div class="form-group bc-select-has-delete">
+        <select class="form-control" name="city" id="citySelect">
+            <option value="">{{ __('Choose a city') }}</option>
+            {{-- Cities will be populated via JS --}}
+        </select>
+        <span class="icon flaticon-map-locator"></span>
+    </div>
+</div>
+
 @endif
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectedCountry = '{{ $country_id }}';
-        const selectedCity = '{{ $city_id }}';
+<!-- <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selectedCountry = '{{ $country_id }}';
+    const selectedState = '{{ $state_id }}';
+    const selectedCity = '{{ $city_id }}';
 
-        const countrySelect = document.getElementById('countrySelect') || document.getElementById('countryInput');
-        const citySelect = document.getElementById('citySelect');
+    const countryInput = document.getElementById('countryInput');
+    const stateSelect = document.getElementById('stateSelect');
+    const citySelect = document.getElementById('citySelect');
 
-        function __(text) {
-            return text; // Fallback if Blade translation not rendered
-        }
-
-        function loadCities(countryId, preselectedCityId = null) {
-            if (!countryId || !citySelect) return;
-
-            fetch(`/get-cities/${countryId}`)
-                .then(response => response.json())
-                .then(data => {
-                    citySelect.innerHTML = `<option value="">${('Select City')}</option>`;
-
-                    data.forEach(city => {
-                        const option = document.createElement('option');
-                        option.value = city.id;
-                        option.textContent = city.name;
-                        if (city.id == preselectedCityId) {
-                            option.selected = true;
-                        }
-                        citySelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching cities:', error);
+    // Load states from selected country
+    function loadStates(countryId, callback) {
+        fetch(`/get-states/${countryId}`)
+            .then(res => res.json())
+            .then(states => {
+                stateSelect.innerHTML = `<option value="">Choose a state</option>`;
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.text = state.name;
+                    if (parseInt(selectedState) === parseInt(state.id)) {
+                        option.selected = true;
+                    }
+                    stateSelect.appendChild(option);
                 });
-        }
 
-        // Load cities on page load
-        if (selectedCountry) {
-            loadCities(selectedCountry, selectedCity);
-        }
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            })
+            .catch(err => console.error('Error loading states:', err));
+    }
 
-        // Watch for changes in country select dropdown (for select dropdown mode)
-        if (countrySelect) {
-            countrySelect.addEventListener('change', function () {
-                const newCountryId = this.value;
-                loadCities(newCountryId);
+    // Load cities from selected state
+    function loadCities(stateId) {
+        fetch(`/get-cities/${stateId}`)
+            .then(res => res.json())
+            .then(cities => {
+                citySelect.innerHTML = `<option value="">Choose a city</option>`;
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.text = city.name;
+                    if (parseInt(selectedCity) === parseInt(city.id)) {
+                        option.selected = true;
+                    }
+                    citySelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error loading cities:', err));
+    }
+
+    // Initial load (on page load)
+    if (selectedCountry) {
+        loadStates(selectedCountry, function () {
+            if (selectedState) {
+                loadCities(selectedState);
+            }
+        });
+    }
+
+    // On country change, load states
+    if (countryInput) {
+        countryInput.addEventListener('change', function () {
+            const countryId = this.value;
+            stateSelect.innerHTML = '<option value="">Choose a state</option>';
+            citySelect.innerHTML = '<option value="">Choose a city</option>';
+            loadStates(countryId);
+        });
+    }
+
+    // On state change, load cities
+    if (stateSelect) {
+        stateSelect.addEventListener('change', function () {
+            const stateId = this.value;
+            citySelect.innerHTML = '<option value="">Choose a city</option>';
+            loadCities(stateId);
+        });
+    }
+});
+</script> -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const countrySelect = document.getElementById('countrySelect');
+    const stateSelect = document.getElementById('stateSelect');
+    const citySelect = document.getElementById('citySelect');
+
+    const selectedState = '{{ $state_id }}';
+    const selectedCity = '{{ $city_id }}';
+
+    function loadStates(countryId, callback) {
+        fetch(`/get-states/${countryId}`)
+            .then(res => res.json())
+            .then(states => {
+                stateSelect.innerHTML = '<option value="">Choose a state</option>';
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.text = state.name;
+                    if (parseInt(selectedState) === parseInt(state.id)) {
+                        option.selected = true;
+                    }
+                    stateSelect.appendChild(option);
+                });
+                if (typeof callback === 'function') callback();
             });
+    }
+
+    function loadCities(stateId) {
+        fetch(`/get-cities/${stateId}`)
+            .then(res => res.json())
+            .then(cities => {
+                citySelect.innerHTML = '<option value="">Choose a city</option>';
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.text = city.name;
+                    if (parseInt(selectedCity) === parseInt(city.id)) {
+                        option.selected = true;
+                    }
+                    citySelect.appendChild(option);
+                });
+            });
+    }
+
+    // On page load, if country is selected
+    if (countrySelect.value) {
+        loadStates(countrySelect.value, function () {
+            if (selectedState) {
+                loadCities(selectedState);
+            }
+        });
+    }
+
+    countrySelect.addEventListener('change', function () {
+        const countryId = this.value;
+        stateSelect.innerHTML = '<option value="">Choose a state</option>';
+        citySelect.innerHTML = '<option value="">Choose a city</option>';
+        if (countryId) {
+            loadStates(countryId);
         }
     });
+
+    stateSelect.addEventListener('change', function () {
+        const stateId = this.value;
+        citySelect.innerHTML = '<option value="">Choose a city</option>';
+        if (stateId) {
+            loadCities(stateId);
+        }
+    });
+});
 </script>

@@ -64,7 +64,7 @@ class Job extends BaseModel
     }
 
     public function location(){
-        return $this->belongsTo(Location::class,'location_id','id');
+        return $this->belongsTo( \Nnjeim\World\Models\City::class,'location_id','id');
     }
 
     public function category(){
@@ -149,20 +149,30 @@ class Job extends BaseModel
 
     public static function search(Request $request)
     {
-        $model_job = parent::query()->select("bc_jobs.*");
+        $model_job = parent::query()->select("bc_jobs.*");        
         $model_job->where("bc_jobs.status", "publish");
         if(!empty($agent_id  = $request->query('agent_id'))){
             $model_job->where('create_user',$agent_id);
         }
-        $location_id = $request->query('location') ?? $request->location;
-        if (!empty($location_id)) {
-            $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
-            if(!empty($location)){
-                $model_job->join('bc_locations', function ($join) use ($location) {
-                    $join->on('bc_locations.id', '=', 'bc_jobs.location_id')
-                        ->where('bc_locations._lft', '>=', $location->_lft)
-                        ->where('bc_locations._rgt', '<=', $location->_rgt);
-                });
+        $country_id = $request->query('country') ?? $request->country;
+        $state_id = $request->query('state') ?? $request->state;
+        $city_id = $request->query('city') ?? $request->city;
+        if(!empty($country_id)) {
+            $country = \Nnjeim\World\Models\Country::query()->where('id', $country_id)->first();
+            if(!empty($country)){
+              $model_job->where('bc_jobs.country_id', $country_id);
+            }
+        }
+        if(!empty($state_id)) {
+            $state = \Nnjeim\World\Models\State::query()->where('id', $state_id)->first();
+            if(!empty($state)){
+              $model_job->where('bc_jobs.state_id', $state_id);
+            }
+        }
+        if (!empty($city_id)) {
+            $city = \Nnjeim\World\Models\City::query()->where('id', $city_id)->first();
+            if(!empty($city)){
+              $model_job->where('bc_jobs.location_id', $city_id);
             }
         }
 
