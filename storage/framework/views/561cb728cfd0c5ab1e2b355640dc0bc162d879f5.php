@@ -1,16 +1,16 @@
-@php
+<?php
     $country_search_style = setting_item('job_country_search_style');
     $country_id = request()->get('country');
     $city_id = request()->get('location');
-@endphp
+?>
 
-@if($countries)
+<?php if($countries): ?>
     <!-- Country Filter -->
     <div class="filter-block">
         <h4>Country</h4>
 
-        @if($country_search_style == 'autocomplete' && $country_id != null)
-            @php
+        <?php if($country_search_style == 'autocomplete' && $country_id != null): ?>
+            <?php
                 $country_name = "";
                 $list_json = [];
 
@@ -23,32 +23,33 @@
                         'title' => $country->name,
                     ];
                 }
-            @endphp
+            ?>
 
             <div class="form-group smart-search">
                 <input type="text"
                        class="smart-search-country parent_text form-control"
-                       placeholder="{{ __('Choose a country') }}"
-                       value="{{ $country_name }}"
-                       data-onLoad="{{ __('Loading...') }}"
-                       data-default="{{ json_encode($list_json) }}"
+                       placeholder="<?php echo e(__('Choose a country')); ?>"
+                       value="<?php echo e($country_name); ?>"
+                       data-onLoad="<?php echo e(__('Loading...')); ?>"
+                       data-default="<?php echo e(json_encode($list_json)); ?>"
                        id="countrySearchInput">
-                <input type="hidden" class="child_id" name="country" value="{{ $country_id }}" id="countryInput">
+                <input type="hidden" class="child_id" name="country" value="<?php echo e($country_id); ?>" id="countryInput">
                 <span class="icon flaticon-map-locator"></span>
             </div>
-        @elseif($country_search_style == 'autocomplete' && $country_id == null)
+        <?php elseif($country_search_style == 'autocomplete' && $country_id == null): ?>
             <div class="form-group bc-select-has-delete">
                 <select class="chosen-select" name="country" id="countrySelect">
-                    <option value="">{{ __('Choose a country') }}</option>
-                    @foreach ($countries as $country)
-                        <option value="{{ $country->id }}" {{ $country_id == $country->id ? 'selected' : '' }}>
-                            {{ $country->name }}
+                    <option value=""><?php echo e(__('Choose a country')); ?></option>
+                    <?php $__currentLoopData = $countries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $country): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($country->id); ?>" <?php echo e($country_id == $country->id ? 'selected' : ''); ?>>
+                            <?php echo e($country->name); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
                 <span class="icon flaticon-map-locator"></span>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <!-- City Filter -->
@@ -57,18 +58,18 @@
 
         <div class="form-group bc-select-has-delete">
             <select class="chosen-container chosen-container-single chosen-container-single-nosearch" name="location" id="citySelect">
-                <option value="">{{ __('Choose a city') }}</option>
-                {{-- Cities will be populated via JS --}}
+                <option value=""><?php echo e(__('Choose a city')); ?></option>
+                
             </select>
             <span class="icon flaticon-map-locator"></span>
         </div>
     </div>
-@endif
+<?php endif; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const selectedCountry = '{{ $country_id }}';
-        const selectedCity = '{{ $city_id }}';
+        const selectedCountry = '<?php echo e($country_id); ?>';
+        const selectedCity = '<?php echo e($city_id); ?>';
 
         const countrySelect = document.getElementById('countrySelect') || document.getElementById('countryInput');
         const citySelect = document.getElementById('citySelect');
@@ -114,3 +115,4 @@
         }
     });
 </script>
+<?php /**PATH C:\xampp7\htdocs\jobsning\modules/Job/Views/frontend/layouts/form-search/fields/form-style-1/country.blade.php ENDPATH**/ ?>

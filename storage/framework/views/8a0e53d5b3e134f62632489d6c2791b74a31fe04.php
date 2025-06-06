@@ -1,6 +1,6 @@
 <!-- Filter Block -->
 <?php $location_search_style = setting_item('job_location_search_style') ?>
-<?php if($list_locations): ?>
+<?php if(!$list_locations): ?>
     <div class="filter-block">
         <h4><?php echo e($val['title']); ?></h4>
         <?php if($location_search_style == 'autocomplete'): ?>

@@ -200,7 +200,8 @@ class JobController extends Controller{
             'markers' => $markers,
             'min_max_price' => Job::getMinMaxPrice(),
             "filter"             => $request->query('filter'),
-            "seo_meta"           => $cat->getSeoMetaWithTranslation(app()->getLocale(), $translation)
+            "seo_meta"           => $cat->getSeoMetaWithTranslation(app()->getLocale(), $translation),
+            'countries'          => \Nnjeim\World\Models\Country::all(),
         ];
         $layout = 'job-list-v1';
         $data['style'] = $layout;
@@ -245,7 +246,8 @@ class JobController extends Controller{
             'job_types'      => JobType::where('status', 'publish')->get(),
             'min_max_price' => Job::getMinMaxPrice(),
             "filter"             => $request->query('filter'),
-            "seo_meta"           => $location->getSeoMetaWithTranslation(app()->getLocale(), $translation)
+            "seo_meta"           => $location->getSeoMetaWithTranslation(app()->getLocale(), $translation),
+            'countries'          => \Nnjeim\World\Models\Country::all(),
         ];
         $layout = 'job-list-v1';
         $data['style'] = $layout;
@@ -294,7 +296,8 @@ class JobController extends Controller{
             'job_types'      => JobType::where('status', 'publish')->get(),
             'min_max_price' => Job::getMinMaxPrice(),
             "filter"             => $request->query('filter'),
-            "seo_meta"           => $cat->getSeoMetaWithTranslation(app()->getLocale(), $translation)
+            "seo_meta"           => $cat->getSeoMetaWithTranslation(app()->getLocale(), $translation),
+            'countries'          => \Nnjeim\World\Models\Country::all(),
         ];
         $layout = 'job-list-v1';
         $data['style'] = $layout;
