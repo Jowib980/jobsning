@@ -12,12 +12,12 @@
                     <div class="job-search-form">
                         <form method="get" action="{{ route('job.search') }}">
                             <div class="row">
-                                <div class="form-group col-lg-5 col-md-12 col-sm-12">
+                                <div class="form-group col-lg-3 col-md-12 col-sm-12">
                                     <span class="icon flaticon-search-1"></span>
                                     <input type="text" name="s" placeholder="{{ __("Job title...") }}">
                                 </div>
                                 <!-- Form Group -->
-                                @if($location_style == 'autocomplete')
+                               <!--  @if($location_style == 'autocomplete')
                                     @php
                                         $location_name = "";
                                         $list_json = [];
@@ -38,7 +38,7 @@
                                         $traverse($list_locations);
                                     @endphp
                                     <div class="form-group col-lg-4 col-md-12 col-sm-12 location smart-search">
-                                        <input type="text" class="smart-search-location parent_text form-control" placeholder="{{__("All City")}}" value="{{ $location_name }}" data-onLoad="{{__("Loading...")}}"
+                                        <input type="text" class="smart-search-location parent_text form-control" placeholder="{{__("All Cities")}}" value="{{ $location_name }}" data-onLoad="{{__("Loading...")}}"
                                                data-default="{{ json_encode($list_json) }}">
                                         <input type="hidden" class="child_id" name="location" value="{{ $location_id }}">
                                         <span class="icon flaticon-map-locator"></span>
@@ -47,7 +47,7 @@
                                     <div class="form-group col-lg-4 col-md-12 col-sm-12 location bc-select-has-delete">
                                         <span class="icon flaticon-map-locator"></span>
                                         <select class="chosen-select" name="location">
-                                            <option value="">{{ __("All City") }}</option>
+                                            <option value="">{{ __("All Cities") }}</option>
                                             @php
                                                 $traverse = function ($locations, $prefix = '') use (&$traverse) {
                                                     foreach ($locations as $location) {
@@ -61,8 +61,26 @@
                                         </select>
                                     </div>
                                 @endif
+ -->
+
+                                <div class="form-group col-lg-3">
+                                    <select id="country_select" name="country" class="form-control">
+                                        <option value="">{{ __("Select Country") }}</option>
+                                        @foreach($countries as $country)
+                                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-lg-3">
+                                    <select id="city_select" name="location" class="form-control">
+                                        <option value="">{{ __("Select City") }}</option>
+                                        {{-- Options will be populated dynamically --}}
+                                    </select>
+                                </div>
+
                                 <!-- Form Group -->
-                                <div class="form-group col-lg-3 col-md-12 col-sm-12 btn-box">
+                                <div class="form-group col-lg-2 col-md-12 col-sm-12 btn-box">
                                     <button type="submit" class="theme-btn btn-style-seven"><span class="btn-title">{{ __("Find Jobs") }}</span></button>
                                 </div>
                             </div>
@@ -113,3 +131,28 @@
         </div>
     </div>
 </section>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const countrySelect = document.getElementById('country_select');
+        const citySelect = document.getElementById('city_select');
+
+        countrySelect.addEventListener('change', function () {
+            const countryId = this.value;
+            citySelect.innerHTML = '<option value="">{{ __("Loading...") }}</option>';
+
+            fetch(`/get-cities/${countryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    citySelect.innerHTML = '<option value="">{{ __("Select City") }}</option>';
+                    data.forEach(function (city) {
+                        const option = document.createElement('option');
+                        option.value = city.id;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+                });
+        });
+    });
+</script>

@@ -41,7 +41,7 @@
                                     @endphp
                                     <div class="form-group col-lg-4 col-md-12 col-sm-12 location smart-search">
                                         <label class="title">{{ __("Where") }}</label>
-                                        <input type="text" class="smart-search-location parent_text form-control" placeholder="{{__("All City")}}" value="{{ $location_name }}" data-onLoad="{{__("Loading...")}}"
+                                        <input type="text" class="smart-search-location parent_text form-control" placeholder="{{__("All Cities")}}" value="{{ $location_name }}" data-onLoad="{{__("Loading...")}}"
                                                data-default="{{ json_encode($list_json) }}">
                                         <input type="hidden" class="child_id" name="location" value="{{ $location_id }}">
                                         <span class="icon flaticon-map-locator"></span>
@@ -51,7 +51,7 @@
                                         <label class="title">{{ __("Where") }}</label>
                                         <span class="icon flaticon-map-locator"></span>
                                         <select class="chosen-select" name="location">
-                                            <option value="">{{ __("All City") }}</option>
+                                            <option value="">{{ __("All Cities") }}</option>
                                             @php
                                                 $traverse = function ($locations, $prefix = '') use (&$traverse) {
                                                     foreach ($locations as $location) {

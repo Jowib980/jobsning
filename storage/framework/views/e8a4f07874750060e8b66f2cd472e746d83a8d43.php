@@ -220,7 +220,7 @@
                                                                <?php echo e(csrf_field()); ?>
 
                                                             <button type="submit" class="dropdown-item text-danger" value="$row->id">Delete</button>
-                                                           </form>
+                                                        </form>
                                                            <?php if($row->status == 'hired'): ?>
                                                            <p class="dropdown-item" style="color: grey; background-color:lightgray;"><?php echo e(__("Mark as Hired")); ?></p>
                                                            <?php else: ?>

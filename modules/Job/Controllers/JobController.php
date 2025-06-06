@@ -50,7 +50,8 @@ class JobController extends Controller{
             'min_max_price' => Job::getMinMaxPrice(),
             'markers' => $markers,
             "filter"             => $request->query('filter'),
-            "seo_meta"           => Job::getSeoMetaForPageList()
+            "seo_meta"           => Job::getSeoMetaForPageList(),
+            'countries'          => \Nnjeim\World\Models\Country::all(),
         ];
         $view_layouts = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9'];
         $layout = setting_item('jobs_list_layout', 'job-list-v1');

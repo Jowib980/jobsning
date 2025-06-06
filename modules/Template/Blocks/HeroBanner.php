@@ -245,6 +245,7 @@ class HeroBanner extends BaseBlock
             'location_style' => 'normal',
             'banner_image_url' => !empty($model['banner_image']) ? FileHelper::url($model['banner_image'], 'full') : '',
             'list_locations'      => Location::where('status', 'publish')->limit(100)->get()->toTree(),
+            'countries' => \Nnjeim\World\Models\Country::all(),
             'list_counter'=>[]
         ], $model);
         $style = (!empty($model['style'])) ? $model['style'] : 'style_1';

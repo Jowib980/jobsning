@@ -27,7 +27,9 @@ class SettingClass extends BaseSettingsClass
                     'job_sidebar_cta',
                     'job_require_plan',
                     'job_hide_expired_jobs',
-                    'job_company_max_post_jobs'
+                    'job_company_max_post_jobs',
+                    'job_country_search_style',
+                    'job_city_search_style'
                 ],
                 'html_keys'=>[
 

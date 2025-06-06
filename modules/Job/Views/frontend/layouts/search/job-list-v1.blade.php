@@ -40,7 +40,6 @@
                         <button type="button" class="theme-btn close-filters">X</button>
                         @include("Job::frontend.layouts.form-search.form-style-1")
                     </div>
-
                     @php
                         $job_sidebar_cta = setting_item_with_lang('job_sidebar_cta',request()->query('lang'), $settings['job_sidebar_cta'] ?? false);
                         if(!empty($job_sidebar_cta)) $job_sidebar_cta = json_decode($job_sidebar_cta);
