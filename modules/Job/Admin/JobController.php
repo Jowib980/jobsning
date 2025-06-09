@@ -154,9 +154,14 @@ class JobController extends AdminController
                     'name'  => $row->title,
                     'class' => 'active'
                 ],
-            ],'countries' => \Nnjeim\World\Models\Country::all(),
-        'states' => $states,
-        'cities' => $cities,'countries' => \Nnjeim\World\Models\Country::all()
+            ],
+            'countries' => \Nnjeim\World\Models\Country::all(),
+            'states' => $states,
+            'cities' => $cities,
+            'selectedCountry' => $row->country_id ?? null,
+            'selectedState' => $row->state_id ?? null,
+            'selectedCity' => $row->location_id ?? null,
+
         ];
         return view('Job::admin.job.detail', $data);
     }
@@ -323,7 +328,7 @@ class JobController extends AdminController
         return view('Job::admin.job.all-applicants', $data);
     }
 
-    public function removeApplicant(Request $request) {
+    public function removeApplicant(Request $request, $id) {
         dd($request->all());
         $data = JobCandidate::find($id);
         $data->delete();
@@ -412,4 +417,13 @@ class JobController extends AdminController
             'results' => $res
         ]);
     }
+
+    public function removeExpireJob(Request $request, $id) {
+        dd($request->all());
+        $data = Job::find($id);
+        $data->delete();
+
+        return redirect()->route('job.admin.allApplicants')->with('success', 'Delete applicant successfully');
+    }
+
 }

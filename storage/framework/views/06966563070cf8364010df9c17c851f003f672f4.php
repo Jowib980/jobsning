@@ -175,12 +175,23 @@
                                                 </div>
                                             </div>
                                         <?php else: ?>
+                                        <?php
+                                            $selectedCountry = $selectedCountry ?? old('country_id');
+                                            $selectedState = $selectedState ?? old('state_id');
+                                            $selectedCity = $selectedCity ?? old('location_id');
+                                            $states = $states ?? collect();
+                                            $cities = $cities ?? collect();
+                                        ?>
+
                                             <div class="row form-group col-lg-12 col-md-12 col-sm-12">
                                                 <div class="form-group col-lg-4">
                                                     <select id="country_select" name="country_id" class="form-control">
                                                         <option value=""><?php echo e(__("Select Country")); ?></option>
                                                         <?php $__currentLoopData = $countries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $country): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($country->id); ?>"><?php echo e($country->name); ?></option>
+                                                            <option value="<?php echo e($country->id); ?>" <?php echo e(old('country_id', $selectedCountry) == $country->id ? 'selected' : ''); ?>>
+                                                                <?php echo e($country->name); ?>
+
+                                                            </option>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
@@ -189,6 +200,12 @@
                                                     <select id="state_select" name="state_id" class="form-control">
                                                         <option value=""><?php echo e(__("Select State")); ?></option>
                                                         
+                                                        <?php $__currentLoopData = $states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $state): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($state->id); ?>" <?php echo e(old('state_id', $selectedState) == $state->id ? 'selected' : ''); ?>>
+                                                                <?php echo e($state->name); ?>
+
+                                                            </option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
 
@@ -196,6 +213,12 @@
                                                     <select id="city_select" name="location_id" class="form-control">
                                                         <option value=""><?php echo e(__("Select City")); ?></option>
                                                         
+                                                         <?php $__currentLoopData = $cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($city->id); ?>" <?php echo e(old('location_id', $selectedCity) == $city->id ? 'selected' : ''); ?>>
+                                                                <?php echo e($city->name); ?>
+
+                                                            </option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
                                                 
@@ -460,36 +483,94 @@
             $('#job_type_id').select2();
         })
 
-    document.addEventListener('DOMContentLoaded', function () {
-        $('#country_select').on('change', function () {
-            let countryId = $(this).val();
-            $('#state_select').empty().append('<option value="">Select State</option>');
-            $('#city_select').empty().append('<option value="">Select City</option>');
-            if (countryId) {
-                fetch(`/get-states/${countryId}`)
-                    .then(response => response.json())
-                    .then(states => {
-                        states.forEach(state => {
-                            $('#state_select').append(`<option value="${state.id}">${state.name}</option>`);
-                        });
-                    });
-            }
-        });
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     $('#country_select').on('change', function () {
+        //         let countryId = $(this).val();
+        //         $('#state_select').empty().append('<option value="">Select State</option>');
+        //         $('#city_select').empty().append('<option value="">Select City</option>');
+        //         if (countryId) {
+        //             fetch(`/get-states/${countryId}`)
+        //                 .then(response => response.json())
+        //                 .then(states => {
+        //                     states.forEach(state => {
+        //                         $('#state_select').append(`<option value="${state.id}">${state.name}</option>`);
+        //                     });
+        //                 });
+        //         }
+        //     });
 
-        $('#state_select').on('change', function () {
-            let stateId = $(this).val();
-            $('#city_select').empty().append('<option value="">Select City</option>');
-            if (stateId) {
-                fetch(`/get-cities/${stateId}`)
-                    .then(response => response.json())
-                    .then(cities => {
-                        cities.forEach(city => {
-                            $('#city_select').append(`<option value="${city.id}">${city.name}</option>`);
-                        });
+        //     $('#state_select').on('change', function () {
+        //         let stateId = $(this).val();
+        //         $('#city_select').empty().append('<option value="">Select City</option>');
+        //         if (stateId) {
+        //             fetch(`/get-cities/${stateId}`)
+        //                 .then(response => response.json())
+        //                 .then(cities => {
+        //                     cities.forEach(city => {
+        //                         $('#city_select').append(`<option value="${city.id}">${city.name}</option>`);
+        //                     });
+        //                 });
+        //         }
+        //     });
+        // });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const selectedState = '<?php echo e($selectedState); ?>';
+    const selectedCity = '<?php echo e($selectedCity); ?>';
+
+    const $country = $('#country_select');
+    const $state = $('#state_select');
+    const $city = $('#city_select');
+
+    function loadStates(countryId, preselect = null) {
+        $state.html('<option value=""><?php echo e(__("Select State")); ?></option>');
+        $city.html('<option value=""><?php echo e(__("Select City")); ?></option>');
+
+        if (countryId) {
+            fetch(`/get-states/${countryId}`)
+                .then(res => res.json())
+                .then(states => {
+                    states.forEach(state => {
+                        let selected = preselect == state.id ? 'selected' : '';
+                        $state.append(`<option value="${state.id}" ${selected}>${state.name}</option>`);
                     });
-            }
-        });
+
+                    if (preselect) {
+                        loadCities(preselect, selectedCity);
+                    }
+                });
+        }
+    }
+
+    function loadCities(stateId, preselect = null) {
+        $city.html('<option value=""><?php echo e(__("Select City")); ?></option>');
+        if (stateId) {
+            fetch(`/get-cities/${stateId}`)
+                .then(res => res.json())
+                .then(cities => {
+                    cities.forEach(city => {
+                        let selected = preselect == city.id ? 'selected' : '';
+                        $city.append(`<option value="${city.id}" ${selected}>${city.name}</option>`);
+                    });
+                });
+        }
+    }
+
+    // On change
+    $country.on('change', function () {
+        loadStates(this.value);
     });
+
+    $state.on('change', function () {
+        loadCities(this.value);
+    });
+
+    // On edit page load
+    if ($country.val()) {
+        loadStates($country.val(), selectedState);
+    }
+});
+
 
     </script>
 <?php $__env->stopSection(); ?>

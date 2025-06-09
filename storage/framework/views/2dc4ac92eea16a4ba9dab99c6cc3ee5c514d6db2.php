@@ -133,7 +133,7 @@ if(empty($is_home) && $header_style == 'normal' && empty($disable_header_shadow)
                     <?php endif; ?>
                     <?php if(is_employer()): ?>
                         <div class="d-flex align-items-center">
-                            <a href="<?php echo e(route('job.admin.create')); ?>" class="theme-btn <?php if($header_style == 'header-style-two'): ?> btn-style-five <?php else: ?> btn-style-one <?php endif; ?> <?php if(!auth()->check()): ?> bc-call-modal login <?php endif; ?>"><?php echo e(__("Job Post")); ?></a>
+                            <a href="<?php echo e(route('job.admin.create')); ?>" class="theme-btn <?php if($header_style == 'header-style-two'): ?> btn-style-five <?php else: ?> btn-style-one <?php endif; ?> <?php if(!auth()->check()): ?> bc-call-modal login <?php endif; ?>"><?php echo e(__(" Post Job/Internship")); ?></a>
                         </div>
                     <?php endif; ?>
                 </div>

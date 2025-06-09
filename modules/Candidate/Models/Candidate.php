@@ -251,14 +251,36 @@ class Candidate extends BaseModel
         $model_candidate = parent::query()->select("bc_candidates.*");
         $model_candidate->where("bc_candidates.allow_search", "publish");
 
-        if (!empty($location_id = $request->query('location'))) {
-            $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
-            if(!empty($location)){
-                $model_candidate->join('bc_locations', function ($join) use ($location) {
-                    $join->on('bc_locations.id', '=', 'bc_candidates.location_id')
-                        ->where('bc_locations._lft', '>=', $location->_lft)
-                        ->where('bc_locations._rgt', '<=', $location->_rgt);
-                });
+        // if (!empty($location_id = $request->query('location'))) {
+        //     $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
+        //     if(!empty($location)){
+        //         $model_candidate->join('bc_locations', function ($join) use ($location) {
+        //             $join->on('bc_locations.id', '=', 'bc_candidates.location_id')
+        //                 ->where('bc_locations._lft', '>=', $location->_lft)
+        //                 ->where('bc_locations._rgt', '<=', $location->_rgt);
+        //         });
+        //     }
+        // }
+
+        $country_id = $request->query('country') ?? $request->country;
+        $state_id = $request->query('state') ?? $request->state;
+        $city_id = $request->query('city') ?? $request->city;
+        if(!empty($country_id)) {
+            $country = \Nnjeim\World\Models\Country::query()->where('id', $country_id)->first();
+            if(!empty($country)){
+              $model_candidate->where('bc_candidates.country', $country_id);
+            }
+        }
+        if(!empty($state_id)) {
+            $state = \Nnjeim\World\Models\State::query()->where('id', $state_id)->first();
+            if(!empty($state)){
+              $model_candidate->where('bc_candidates.city', $state_id);
+            }
+        }
+        if (!empty($city_id)) {
+            $city = \Nnjeim\World\Models\City::query()->where('id', $city_id)->first();
+            if(!empty($city)){
+              $model_candidate->where('bc_candidates.location_id', $city_id);
             }
         }
 

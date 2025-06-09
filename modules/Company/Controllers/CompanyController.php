@@ -77,7 +77,8 @@ class CompanyController extends FrontendController
             "seo_meta"   => $this->company::getSeoMetaForPageList(),
             "languages"=>$this->language::getActive(false),
             "locale"=> app()->getLocale(),
-            'markers'            => $markers
+            'markers'            => $markers,
+            'countries' => \Nnjeim\World\Models\Country::all()
         ];
         $view_layouts = ['v1', 'v2', 'v3','v4'];
         $layout = (setting_item('company_list_layout') && !empty(setting_item('company_list_layout'))) ? setting_item('company_list_layout') : 'company-list-v1';

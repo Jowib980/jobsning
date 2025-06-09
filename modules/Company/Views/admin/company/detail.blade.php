@@ -68,22 +68,50 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <div class="">
-                                                <select name="location_id" class="form-control">
-                                                    <option value="">{{__("-- Please Select --")}}</option>
-                                                    <?php
-                                                    $traverse = function ($locations, $prefix = '') use (&$traverse, $row) {
-                                                        foreach ($locations as $location) {
-                                                            $selected = '';
-                                                            if ($row->location_id == $location->id)
-                                                                $selected = 'selected';
-                                                            printf("<option value='%s' %s>%s</option>", $location->id, $selected, $prefix . ' ' . $location->name);
-                                                            $traverse($location->children, $prefix . '-');
-                                                        }
-                                                    };
-                                                    $traverse($company_location);
-                                                    ?>
-                                                </select>
+                                            @php
+                                            $selectedCountry = $selectedCountry ?? old('country_id');
+                                            $selectedState = $selectedState ?? old('state_id');
+                                            $selectedCity = $selectedCity ?? old('location_id');
+                                            $states = $states ?? collect();
+                                            $cities = $cities ?? collect();
+                                        @endphp
+
+                                            <div class="row form-group col-lg-12 col-md-12 col-sm-12">
+                                                <div class="form-group col-lg-4">
+                                                    <select id="country_select" name="country_id" class="form-control">
+                                                        <option value="">{{ __("Select Country") }}</option>
+                                                        @foreach($countries as $country)
+                                                            <option value="{{ $country->id }}" {{ old('country_id', $selectedCountry) == $country->id ? 'selected' : '' }}>
+                                                                {{ $country->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                 <div class="form-group col-lg-4">
+                                                    <select id="state_select" name="state_id" class="form-control">
+                                                        <option value="">{{ __("Select State") }}</option>
+                                                        {{-- Options will be populated dynamically --}}
+                                                        @foreach($states as $state)
+                                                            <option value="{{ $state->id }}" {{ old('state_id', $selectedState) == $state->id ? 'selected' : '' }}>
+                                                                {{ $state->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-lg-4">
+                                                    <select id="city_select" name="location_id" class="form-control">
+                                                        <option value="">{{ __("Select City") }}</option>
+                                                        {{-- Options will be populated dynamically --}}
+                                                         @foreach($cities as $city)
+                                                            <option value="{{ $city->id }}" {{ old('location_id', $selectedCity) == $city->id ? 'selected' : '' }}>
+                                                                {{ $city->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                
                                             </div>
                                         @endif
                                     </div>
@@ -300,5 +328,66 @@
                 }
             });
         })
+
+
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectedState = '{{ $selectedState }}';
+            const selectedCity = '{{ $selectedCity }}';
+
+            const $country = $('#country_select');
+            const $state = $('#state_select');
+            const $city = $('#city_select');
+
+            function loadStates(countryId, preselect = null) {
+                $state.html('<option value="">{{ __("Select State") }}</option>');
+                $city.html('<option value="">{{ __("Select City") }}</option>');
+
+                if (countryId) {
+                    fetch(`/get-states/${countryId}`)
+                        .then(res => res.json())
+                        .then(states => {
+                            states.forEach(state => {
+                                let selected = preselect == state.id ? 'selected' : '';
+                                $state.append(`<option value="${state.id}" ${selected}>${state.name}</option>`);
+                            });
+
+                            if (preselect) {
+                                loadCities(preselect, selectedCity);
+                            }
+                        });
+                }
+            }
+
+            function loadCities(stateId, preselect = null) {
+                $city.html('<option value="">{{ __("Select City") }}</option>');
+                if (stateId) {
+                    fetch(`/get-cities/${stateId}`)
+                        .then(res => res.json())
+                        .then(cities => {
+                            cities.forEach(city => {
+                                let selected = preselect == city.id ? 'selected' : '';
+                                $city.append(`<option value="${city.id}" ${selected}>${city.name}</option>`);
+                            });
+                        });
+                }
+            }
+
+            // On change
+            $country.on('change', function () {
+                loadStates(this.value);
+            });
+
+            $state.on('change', function () {
+                loadCities(this.value);
+            });
+
+            // On edit page load
+            if ($country.val()) {
+                loadStates($country.val(), selectedState);
+            }
+        });
+
+
     </script>
 @endsection

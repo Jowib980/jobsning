@@ -1,5 +1,5 @@
 <!-- Filter Block -->
-@php $location_search_style = setting_item('candidate_location_search_style') @endphp
+@php $location_search_style = setting_item('candidate_loc_search_style') @endphp
 @if($list_locations)
     <div class="filter-block">
         <h4>{{ $val['title'] }}</h4>

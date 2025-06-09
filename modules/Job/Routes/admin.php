@@ -30,6 +30,9 @@ Route::post('/category/bulkEdit','JobCategoryController@bulkEdit')->name('job.ad
 Route::post('/applicant','JobController@removeApplicant')->name('job.admin.removeApplicant');
 
 
+Route::delete('/remove-job/{id}','JobController@removeExpireJob')->name('job.admin.removeJob');
+
+
 // Get states by country ID
 Route::get('/get-states/{country_id}', function ($country_id) {
     $country = \Nnjeim\World\Models\Country::with('states')->find($country_id);

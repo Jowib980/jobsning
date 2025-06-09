@@ -99,6 +99,8 @@ class CompanyController extends AdminController
         $row->fill([
             'status' => 'publish',
         ]);
+
+        
         $data = [
             'categories'        => $this->category::get()->toTree(),
             'attributes'     => $this->attributes::where('service', 'company')->get(),
@@ -115,7 +117,9 @@ class CompanyController extends AdminController
                 ],
             ],
             'page_title'=>__("Add new Company"),
-            'translation'=>new $this->company_translation()
+            'translation'=>new $this->company_translation(),
+            'countries' => \Nnjeim\World\Models\Country::all()
+            
         ];
         return view('Company::admin.company.detail', $data);
     }
@@ -140,6 +144,19 @@ class CompanyController extends AdminController
             }
         }
 
+        // Preload location relationships
+        $selected_country_id = $row->country;
+        $selected_state_id = $row->state;
+
+        $states = $selected_country_id
+            ? \Nnjeim\World\Models\State::where('country_id', $selected_country_id)->get()
+            : collect();
+
+        $cities = $selected_state_id
+            ? \Nnjeim\World\Models\City::where('state_id', $selected_state_id)->get()
+            : collect();
+
+
         $data = [
             'row'  => $row,
             'categories'        => $this->category::get()->toTree(),
@@ -149,6 +166,12 @@ class CompanyController extends AdminController
             'enable_multi_lang'=>true,
             'page_title'=>__("Edit Company :name",['name'=>$translation->name]),
             "selected_terms"    => $row->companyTerm ? $row->companyTerm->pluck('term_id') : [],
+            'countries' => \Nnjeim\World\Models\Country::all(),
+            'states' => $states,
+            'cities' => $cities,
+            'selectedCountry' => $row->country ?? null,
+            'selectedState' => $row->state ?? null,
+            'selectedCity' => $row->city ?? null,
         ];
         return view('Company::admin.company.detail', $data);
     }

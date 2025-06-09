@@ -124,17 +124,41 @@ class Company extends BaseModel
                 });
             }
         }
-        if(!empty($location_id = $request->query("location")))
-        {
-            $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
-            if(!empty($location)){
-                $model_companies->join('bc_locations', function ($join) use ($location) {
-                    $join->on('bc_locations.id', '=', 'bc_companies.location_id')
-                        ->where('bc_locations._lft', '>=', $location->_lft)
-                        ->where('bc_locations._rgt', '<=', $location->_rgt);
-                });
+
+        // if(!empty($location_id = $request->query("location")))
+        // {
+        //     $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
+        //     if(!empty($location)){
+        //         $model_companies->join('bc_locations', function ($join) use ($location) {
+        //             $join->on('bc_locations.id', '=', 'bc_companies.location_id')
+        //                 ->where('bc_locations._lft', '>=', $location->_lft)
+        //                 ->where('bc_locations._rgt', '<=', $location->_rgt);
+        //         });
+        //     }
+        // }
+
+        $country_id = $request->query('country') ?? $request->country;
+        $state_id = $request->query('state') ?? $request->state;
+        $city_id = $request->query('city') ?? $request->city;
+        if(!empty($country_id)) {
+            $country = \Nnjeim\World\Models\Country::query()->where('id', $country_id)->first();
+            if(!empty($country)){
+              $model_companies->where('bc_companies.country', $country_id);
             }
         }
+        if(!empty($state_id)) {
+            $state = \Nnjeim\World\Models\State::query()->where('id', $state_id)->first();
+            if(!empty($state)){
+              $model_companies->where('bc_companies.state', $state_id);
+            }
+        }
+        if (!empty($city_id)) {
+            $city = \Nnjeim\World\Models\City::query()->where('id', $city_id)->first();
+            if(!empty($city)){
+              $model_companies->where('bc_companies.city', $city_id);
+            }
+        }
+
         if(!empty($from_date = $request->query("from_date")) && !empty($to_date = $request->query("to_date")))
         {
             $day_last_month = date("t", strtotime($to_date . "-12-01"));

@@ -65,7 +65,7 @@
                                 <th width="150px"> {{ __('Company')}}</th>
                                 <th width="100px"> {{ __('Status')}}</th>
                                 <th width="100px"> {{ __('Date')}}</th>
-                                <th width="100px"></th>
+                                <th colspan="2"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -85,6 +85,14 @@
                                         <td>
                                             <a href="{{  $row->getEditUrl() }}" class="btn btn-default btn-sm"><i class="fa fa-edit"></i> {{__('Edit')}}
                                             </a>
+                                            
+                                        </td>
+                                        <td>
+                                            <form action="{{route('job.admin.removeJob', $row->id)}}" method="post">
+                                                @csrf
+                                                 @method('DELETE')
+                                                <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

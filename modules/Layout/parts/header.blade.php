@@ -129,7 +129,7 @@ if(empty($is_home) && $header_style == 'normal' && empty($disable_header_shadow)
                     @endif
                     @if(is_employer())
                         <div class="d-flex align-items-center">
-                            <a href="{{ route('job.admin.create') }}" class="theme-btn @if($header_style == 'header-style-two') btn-style-five @else btn-style-one @endif @if(!auth()->check()) bc-call-modal login @endif">{{ __("Job Post") }}</a>
+                            <a href="{{ route('job.admin.create') }}" class="theme-btn @if($header_style == 'header-style-two') btn-style-five @else btn-style-one @endif @if(!auth()->check()) bc-call-modal login @endif">{{ __(" Post Job/Internship") }}</a>
                         </div>
                     @endif
                 </div>

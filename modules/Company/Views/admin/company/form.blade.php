@@ -34,25 +34,71 @@
             </div>
         </div>
         @endif
+        @php
+            $selectedCountry = $selectedCountry ?? old('country');
+            $selectedState = $selectedState ?? old('state');
+            $selectedCity = $selectedCity ?? old('city');
+            $states = $states ?? collect();
+            $cities = $cities ?? collect();
+        @endphp
         <div class="col-md-6">
             <div class="form-group">
                 <label>{{ __('Address')}}</label>
                 <input type="text" value="{{old('address',$row->address)}}" placeholder="{{ __('Address')}}" name="address" class="form-control">
             </div>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <div class="form-group">
                 <label>{{__("City")}}</label>
                 <input type="text" value="{{old('city',$row->city)}}" name="city" placeholder="{{__("City")}}" class="form-control">
             </div>
-        </div>
+        </div> -->
         <div class="col-md-6">
             <div class="form-group">
-                <label>{{__("State")}}</label>
-                <input type="text" value="{{old('state',$row->state)}}" name="state" placeholder="{{__("State")}}" class="form-control">
+                <label>{{__("Country")}}</label>
+                <select id="country_select" name="country" class="form-control">
+                    <option value="">{{ __("Select Country") }}</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id }}" {{ old('country', $selectedCountry) == $country->id ? 'selected' : '' }}>
+                                {{ $country->name }}
+                            </option>
+                         @endforeach
+                </select>
             </div>
         </div>
         <div class="col-md-6">
+            <!-- <div class="form-group">
+                <label>{{__("State")}}</label>
+                <input type="text" value="{{old('state',$row->state)}}" name="state" placeholder="{{__("State")}}" class="form-control">
+            </div> -->
+            <div class="form-group">
+                <label>{{__("State")}}</label>
+                <select id="state_select" name="state" class="form-control">
+                    <option value="">{{ __("Select State") }}</option>
+                       {{-- Options will be populated dynamically --}}
+                        @foreach($states as $state)
+                            <option value="{{ $state->id }}" {{ old('state', $selectedState) == $state->id ? 'selected' : '' }}>
+                                {{ $state->name }}
+                            </option>
+                        @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>{{__("City")}}</label>
+                <select id="city_select" name="city" class="form-control">
+                    <option value="">{{ __("Select City") }}</option>
+                       {{-- Options will be populated dynamically --}}
+                        @foreach($cities as $city)
+                            <option value="{{ $city->id }}" {{ old('city', $selectedCity) == $city->id ? 'selected' : '' }}>
+                                {{ $city->name }}
+                            </option>
+                        @endforeach
+                </select>
+            </div>
+        </div>
+        <!-- <div class="col-md-6">
             <div class="form-group">
                 <label class="">{{__("Country")}}</label>
                 <select name="country" class="form-control" id="country-sms-testing">
@@ -62,7 +108,7 @@
                     @endforeach
                 </select>
             </div>
-        </div>
+        </div> -->
         <div class="col-md-6">
             <div class="form-group">
                 <label>{{__("Zip Code")}}</label>
@@ -89,3 +135,63 @@
 
 
 
+<script type="text/javascript">
+    
+document.addEventListener('DOMContentLoaded', function () {
+    const selectedState = '{{ $selectedState }}';
+    const selectedCity = '{{ $selectedCity }}';
+
+    const $country = $('#country_select');
+    const $state = $('#state_select');
+    const $city = $('#city_select');
+
+    function loadStates(countryId, preselect = null) {
+        $state.html('<option value="">{{ __("Select State") }}</option>');
+        $city.html('<option value="">{{ __("Select City") }}</option>');
+
+        if (countryId) {
+            fetch(`/get-states/${countryId}`)
+                .then(res => res.json())
+                .then(states => {
+                    states.forEach(state => {
+                        let selected = preselect == state.id ? 'selected' : '';
+                        $state.append(`<option value="${state.id}" ${selected}>${state.name}</option>`);
+                    });
+
+                    if (preselect) {
+                        loadCities(preselect, selectedCity);
+                    }
+                });
+        }
+    }
+
+    function loadCities(stateId, preselect = null) {
+        $city.html('<option value="">{{ __("Select City") }}</option>');
+        if (stateId) {
+            fetch(`/get-cities/${stateId}`)
+                .then(res => res.json())
+                .then(cities => {
+                    cities.forEach(city => {
+                        let selected = preselect == city.id ? 'selected' : '';
+                        $city.append(`<option value="${city.id}" ${selected}>${city.name}</option>`);
+                    });
+                });
+        }
+    }
+
+    // On change
+    $country.on('change', function () {
+        loadStates(this.value);
+    });
+
+    $state.on('change', function () {
+        loadCities(this.value);
+    });
+
+    // On edit page load
+    if ($country.val()) {
+        loadStates($country.val(), selectedState);
+    }
+});
+
+</script>

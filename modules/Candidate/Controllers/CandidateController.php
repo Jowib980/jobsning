@@ -61,7 +61,8 @@ class CandidateController extends FrontendController
             'min_max_price' => Candidate::getMinMaxPrice(),
             "filter"             => $request->query('filter'),
             "seo_meta"           => Candidate::getSeoMetaForPageList(),
-            'markers'            => $markers
+            'markers'            => $markers,
+            'countries' => \Nnjeim\World\Models\Country::all()
         ];
 
         $layout = setting_item('candidate_list_layout', 'v1');
