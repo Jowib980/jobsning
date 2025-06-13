@@ -35,4 +35,9 @@ class JobCandidate extends BaseModel
     public function company(){
         return $this->hasOne(Company::class,'id','company_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(\App\User::class, 'user_id', 'id');
+    }
+
 }

@@ -64,7 +64,7 @@
                                 <th width="150px"> {{ __('Category')}}</th>
                                 <th width="150px"> {{ __('Company')}}</th>
                                 <th width="100px"> {{ __('Status')}}</th>
-                                <th width="100px"> {{ __('Date')}}</th>
+                                <th width="100px"> {{ __('Published Date')}}</th>
                                 <th colspan="2"></th>
                             </tr>
                             </thead>
@@ -80,20 +80,55 @@
                                         <td>{{$row->location->name ?? ''}}</td>
                                         <td>{{$row->category->name ?? ''}}</td>
                                         <td>{{$row->company->name ?? ''}}</td>
-                                        <td><span class="badge badge-{{ $row->status }}">{{ $row->status }}</span></td>
-                                        <td>{{ display_date($row->updated_at)}}</td>
+                                        <!-- <td><span class="badge badge-{{ $row->status }}">{{ $row->status }}</span></td> -->
                                         <td>
-                                            <a href="{{  $row->getEditUrl() }}" class="btn btn-default btn-sm"><i class="fa fa-edit"></i> {{__('Edit')}}
-                                            </a>
-                                            
+                                            @php
+                                                $badgeClass = 'badge-';
+                                                $customStyle = '';
+
+                                                if ($row->status === 'pause') {
+                                                    $customStyle = 'background-color: #f3af33; color: white;';
+                                                } elseif ($row->status === 'closed') {
+                                                    $customStyle = 'background-color: #f13434; color: white;';
+                                                } else {
+                                                    $badgeClass .= $row->status; // fallback to default class
+                                                }
+                                            @endphp
+
+                                            <span class="badge {{ $badgeClass }}" style="{{ $customStyle }}">
+                                                {{ $row->status }}
+                                            </span>
                                         </td>
+
+                                        <td>{{ display_date($row->updated_at)}}</td>
+                                        @if($row->status != 'closed')
                                         <td>
+                                            <a href="{{  $row->getEditUrl() }}" class="btn btn-success"><i class="fa fa-edit"></i></a>
+                                        </td>
+                                        @endif
+                                        <!-- <td>
                                             <form action="{{route('job.admin.removeJob', $row->id)}}" method="post">
                                                 @csrf
-                                                 @method('DELETE')
-                                                <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i></button>
+                                                @method('DELETE')
+                                                <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete this applicant?')"><i class="fa fa-trash"></i></button>
                                             </form>
+                                        </td> -->
+                                        @if($row->status != 'closed')
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-link btn-sm p-0 m-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    &#8942; {{-- Unicode vertical ellipsis (⋮) --}}
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item" href="{{ route('job.admin.job.changeStatus', ['status' => 'pause', 'id' => $row->id])}}">{{ __("Pause") }}</a>
+
+                                                    <a class="dropdown-item" href="{{ route('job.admin.job.changeStatus', ['status' => 'publish', 'id' => $row->id]) }}">{{ __("Open") }}</a>
+
+                                                    <a class="dropdown-item" href="{{ route('job.admin.job.changeStatus', ['status' => 'closed', 'id' => $row->id]) }}">{{ __("Close") }}</a>
+
+                                            </div>
                                         </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             @else

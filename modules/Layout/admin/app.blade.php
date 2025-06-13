@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="{{url('libs/daterange/daterangepicker.css')}}"/>
     <link href="{{ asset('dist/admin/css/vendors.css') }}" rel="stylesheet">
     <link href="{{ asset('dist/admin/css/app.css') }}" rel="stylesheet">
+
     {!! \App\Helpers\Assets::css() !!}
     {!! \App\Helpers\Assets::js() !!}
     <script>
@@ -99,7 +100,7 @@
 
 </head>
 <body class="{{($enable_multi_lang ?? '') ? 'enable_multi_lang' : '' }} @if(setting_item('site_enable_multi_lang')) site_enable_multi_lang @endif">
-<div id="app">
+<div id="app" style="overflow: hidden !important;">
     <div class="main-header d-flex">
         @include('Layout::admin.parts.header')
     </div>

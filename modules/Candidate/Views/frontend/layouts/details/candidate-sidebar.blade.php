@@ -1,3 +1,5 @@
+
+
 <div class="sidebar-widget">
     <div class="widget-content">
         <ul class="job-overview">
@@ -32,11 +34,11 @@
                 </li>
             @endif
 
-            @if($row->languages)
+            @if($languages)
                 <li>
                     <i class="icon icon-language"></i>
                     <h5>{{__('Language')}}:</h5>
-                    <span>{{ $row->languages }}</span>
+                    <span>{{ $languages }}</span>
                 </li>
             @endif
 

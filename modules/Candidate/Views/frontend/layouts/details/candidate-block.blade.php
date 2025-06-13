@@ -1,10 +1,14 @@
+@php
+    $country = Nnjeim\World\Models\Country::find($row->country);
+    $city = Nnjeim\World\Models\City::find($row->location_id);
+@endphp
 <div class="content">
     <figure class="image"><img src="{{$row->user->getAvatarUrl()}}" alt=""></figure>
     <h4 class="name"><a href="#">{{$row->user->getDisplayName()}}</a></h4>
     <ul class="candidate-info">
         <li class="designation">{{$row->title}}</li>
-        @if($row->city)
-            <li><span class="icon flaticon-map-locator"></span> {{$row->city}}</li>
+        @if($country || $city)
+            <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? '' }}, {{ $city->name ?? '' }}</li>
         @endif
         @if($row->expected_salary)
             <li><span class="icon flaticon-money"></span> {{$row->expected_salary}} {{currency_symbol()}}  / {{$row->salary_type}}</li>

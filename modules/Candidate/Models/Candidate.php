@@ -13,10 +13,11 @@ use Modules\Media\Helpers\FileHelper;
 use Modules\Skill\Models\Skill;
 use Modules\User\Models\UserViews;
 use Modules\User\Models\UserWishList;
+use Illuminate\Notifications\Notifiable;
 
 class Candidate extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, Notifiable;
     protected $table = 'bc_candidates';
     protected $fillable = [
         'title',
@@ -265,6 +266,7 @@ class Candidate extends BaseModel
         $country_id = $request->query('country') ?? $request->country;
         $state_id = $request->query('state') ?? $request->state;
         $city_id = $request->query('city') ?? $request->city;
+        
         if(!empty($country_id)) {
             $country = \Nnjeim\World\Models\Country::query()->where('id', $country_id)->first();
             if(!empty($country)){

@@ -55,11 +55,7 @@ class ModuleProvider extends ModuleServiceProvider
                         'title'      => __("Category"),
                         'permission' => 'category_manage_others'
                     ],
-                    'resume_build' => [
-                        'url' => route('candidate.admin.resume.form'),
-                        'title' => _("Resume Builder"),
-                        'permission' => 'candidate_manage',
-                    ]
+                    
                 ]
             ],
 
@@ -72,6 +68,13 @@ class ModuleProvider extends ModuleServiceProvider
                     'title'      => __("My Applied"),
                     'icon'       => 'ion-md-bookmarks',
                     'permission' => 'candidate_manage'
+                ];
+                $candidate_menus['resume_build'] = [
+                     "position"=> 31,
+                    'url'        => route('candidate.admin.resume.form'),
+                    'title'      => __("Resume Builder"),
+                    'icon'       => 'ion-md-document',
+                    'permission' => 'candidate_manage',
                 ];
             }
         }

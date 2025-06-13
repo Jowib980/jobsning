@@ -27,11 +27,18 @@ Route::post('/category/store/{id}','JobCategoryController@store')->name('job.adm
 Route::post('/category/bulkEdit','JobCategoryController@bulkEdit')->name('job.admin.category.bulkEdit');
 
 
-Route::post('/applicant','JobController@removeApplicant')->name('job.admin.removeApplicant');
-
+Route::delete('/applicant/{id}','JobController@removeApplicant')->name('job.admin.removeApplicant');
 
 Route::delete('/remove-job/{id}','JobController@removeExpireJob')->name('job.admin.removeJob');
+Route::get('/job/{status}/{id}','JobController@jobStatusChange')->name('job.admin.job.changeStatus');
 
+Route::post('/interview-setup/{id}','JobController@interviewSetup')->name('job.admin.interviewSetup');
+
+
+Route::get('/overview','JobController@jobOverview')->name('job.admin.overview');
+Route::get('/shortlisted','JobController@jobShortlisted')->name('job.admin.shortlisted');
+Route::get('/hired','JobController@jobHired')->name('job.admin.hired');
+Route::get('/not-interested','JobController@jobNotInterested')->name('job.admin.not-interested');
 
 // Get states by country ID
 Route::get('/get-states/{country_id}', function ($country_id) {

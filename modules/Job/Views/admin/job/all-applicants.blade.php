@@ -123,7 +123,25 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ display_date($row->created_at) }}</td>
-                                                <td><span class="badge badge-{{ $row->status }}">{{ $row->status }}</span></td>
+                                                <!-- <td><span class="badge badge-{{ $row->status }}">{{ $row->status }}</span></td> -->
+                                                <td>
+                                                    @php
+                                                        $badgeClass = 'badge-';
+                                                        $customStyle = '';
+
+                                                        if ($row->status === 'hired') {
+                                                            $customStyle = 'background-color: #28a745; color: white;';
+                                                        } elseif ($row->status === 'interview scheduled') {
+                                                            $customStyle = 'background-color: #f49c2d; color: white;';
+                                                        } else {
+                                                            $badgeClass .= $row->status; // fallback to default class
+                                                        }
+                                                    @endphp
+
+                                                    <span class="badge {{ $badgeClass }}" style="{{ $customStyle }}">
+                                                        {{ $row->status }}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <div class="dropdown">
                                                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -206,12 +224,19 @@
                                                             <a class="dropdown-item" href="{{ route('job.admin.applicants.changeStatus', ['status' => 'approved', 'id' => $row->id]) }}">{{ __("Call") }}</a>
                                                             @if( $row->status == 'hired')
                                                             <p class="dropdown-item" style="color:grey; background-color: lightgray;">{{ __("Setup Interview") }}</p>
+                                                           @elseif($row->status === 'interview scheduled' && $row->interview_date)
+                                                                <span class="dropdown-item">
+                                                                    {{ __("Scheduled:") }} {{ \Carbon\Carbon::parse($row->interview_date)->format('M d, Y') }}
+                                                                    {{ \Carbon\Carbon::parse($row->interview_time)->format('h:i A') }}
+                                                                </span>
                                                             @else
                                                              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#interview-modal-{{ $row->id }}">{{ __("Setup Interview") }}</a>
                                                             @endif
-                                                        <form method="post" action="{{url('admin/module/job/applicant)')}}">
-                                                               {{csrf_field()}}
-                                                            <button type="submit" class="dropdown-item text-danger" value="$row->id">Delete</button>
+                                                        <form method="POST" action="{{route('job.admin.removeApplicant', $row->id)}}">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to delete this applicant?')">Delete
+                                                            </button>
                                                         </form>
                                                            @if($row->status == 'hired')
                                                            <p class="dropdown-item" style="color: grey; background-color:lightgray;">{{ __("Mark as Hired") }}</p>
@@ -220,55 +245,62 @@
                                                             @endif
                                                         </div>
                                                     </div>
-                                                    <div class="modal fade" id="interview-modal-{{ $row->id }}">
-                                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <!-- Interview Modal -->
+                                                    <div class="modal fade" id="interview-modal-{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="interviewModalLabel{{ $row->id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                             <div class="modal-content">
 
                                                                 <div class="modal-header">
-                                                                    <h4 class="modal-title">{{ __("Setup Interview") }}</h4>
+                                                                    <h4 class="modal-title" id="interviewModalLabel{{ $row->id }}">{{ __("Setup Interview") }}</h4>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
                                                                 </div>
 
-                                                                <div class="modal-body">
-                                                                    <div class="info-form">
-                                                                        <div class="applied-list">
-                                                                            <div class="applied-item">
-                                                                                <div class="label">{{ __("Candidate:") }}</div>
-                                                                                <div class="val">
-                                                                                    @if(!empty($row->candidateInfo->getAuthor->getDisplayName()))
-                                                                                        <a href="{{ $row->candidateInfo->getDetailUrl() }}" target="_blank">
-                                                                                            <img src="{{ $row->candidateInfo->getAuthor->getAvatarUrl() }}" style="border-radius: 50%" class="company-logo" />
-                                                                                            {{$row->candidateInfo->getAuthor->getDisplayName() ?? ''}}
-                                                                                        </a>
-                                                                                    @endif
+                                                                <form action="{{ route('job.admin.interviewSetup', $row->id) }}" method="post">
+                                                                    @csrf
+                                                                    <div class="modal-body">
+                                                                        <div class="info-form">
+                                                                            <div class="applied-list">
+                                                                                <div class="applied-item">
+                                                                                    <div class="label">{{ __("Candidate:") }}</div>
+                                                                                    <div class="val">
+                                                                                        @if(!empty($row->candidateInfo->getAuthor->getDisplayName()))
+                                                                                            <a href="{{ $row->candidateInfo->getDetailUrl() }}" target="_blank">
+                                                                                                <img src="{{ $row->candidateInfo->getAuthor->getAvatarUrl() }}" style="border-radius: 50%" class="company-logo" />
+                                                                                                {{ $row->candidateInfo->getAuthor->getDisplayName() ?? '' }}
+                                                                                            </a>
+                                                                                        @endif
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <div class="applied-item">
-                                                                                <div class="label">{{ __('Interview Date:') }}</div>
-                                                                                <div class="val">
-                                                                                    <input type="date" name="interview_date" class="form-control">
+
+                                                                                <div class="applied-item">
+                                                                                    <div class="label">{{ __('Interview Date:') }}</div>
+                                                                                    <div class="val">
+                                                                                        <input type="date" name="interview_date" class="form-control" required>
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <div class="applied-item">
-                                                                                <div class="label">{{ __("Scheduled Time:") }}</div>
-                                                                                <div class="val">
-                                                                                    <input type="time" name="schedule_time" class="form-control">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="applied-item">
-                                                                                <div class="label">{{ __("Round:") }}</div>
-                                                                                <div class="val">
-                                                                                    <input type="text" name="" class="form-control">
+
+                                                                                <div class="applied-item">
+                                                                                    <div class="label">{{ __("Scheduled Time:") }}</div>
+                                                                                    <div class="val">
+                                                                                        <input type="time" name="interview_time" class="form-control" required>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <span class="btn btn-secondary" data-dismiss="modal">{{ __("Close") }}</span>
-                                                                </div>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="submit" class="btn btn-primary">{{ __("Save") }}</button>
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __("Close") }}</button>
+                                                                    </div>
+                                                                </form>
+
                                                             </div>
                                                         </div>
                                                     </div>
+
                                                 </td>
                                             </tr>
                                         @endforeach

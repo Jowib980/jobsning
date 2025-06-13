@@ -1,0 +1,1 @@
+<?php /**PATH C:\xampp\htdocs\jobsning\modules\Job\Views\frontend\seller\user.blade.php ENDPATH**/ ?>

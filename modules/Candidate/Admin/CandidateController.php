@@ -205,10 +205,11 @@ class CandidateController extends AdminController
     function myContact(Request $request){
         $this->setActiveMenu('admin/module/candidate/my-contact');
         $query = CandidateContact::query()
-            ->where(function($q){
-                $q->whereNull('contact_to')
-                    ->orWhere('contact_to', 'candidate');
-            })->where('origin_id', Auth::id());
+            // ->where(function($q){
+            //     $q->whereNull('contact_to')
+            //         ->orWhere('contact_to', 'candidate');
+            // })
+            ->where('user_id', Auth::id());
 
         if($orderby = $request->get('orderby')){
             switch ($orderby){
@@ -261,12 +262,5 @@ class CandidateController extends AdminController
         ]);
     }
 
-    public function resumeBuild(Request $request) {
-        return view('Candidate::admin.resume.form');
-    }
-
-    public function resumeStore(Request $request) {
-        return view('Candidate::admin.resume.index');
-    }
-
+    
 }

@@ -245,7 +245,7 @@
                             </div>
                         @endif
 
-                        @include('Core::admin/seo-meta/seo-meta')
+                        <!-- @include('Core::admin/seo-meta/seo-meta') -->
                     </div>
                     <div class="col-md-3">
                         <div class="panel">
@@ -473,36 +473,6 @@
             $('#job_type_id').select2();
         })
 
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     $('#country_select').on('change', function () {
-        //         let countryId = $(this).val();
-        //         $('#state_select').empty().append('<option value="">Select State</option>');
-        //         $('#city_select').empty().append('<option value="">Select City</option>');
-        //         if (countryId) {
-        //             fetch(`/get-states/${countryId}`)
-        //                 .then(response => response.json())
-        //                 .then(states => {
-        //                     states.forEach(state => {
-        //                         $('#state_select').append(`<option value="${state.id}">${state.name}</option>`);
-        //                     });
-        //                 });
-        //         }
-        //     });
-
-        //     $('#state_select').on('change', function () {
-        //         let stateId = $(this).val();
-        //         $('#city_select').empty().append('<option value="">Select City</option>');
-        //         if (stateId) {
-        //             fetch(`/get-cities/${stateId}`)
-        //                 .then(response => response.json())
-        //                 .then(cities => {
-        //                     cities.forEach(city => {
-        //                         $('#city_select').append(`<option value="${city.id}">${city.name}</option>`);
-        //                     });
-        //                 });
-        //         }
-        //     });
-        // });
 
 document.addEventListener('DOMContentLoaded', function () {
     const selectedState = '{{ $selectedState }}';

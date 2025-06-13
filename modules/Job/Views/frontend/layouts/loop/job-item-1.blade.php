@@ -1,4 +1,10 @@
+@php
+    $country = Nnjeim\World\Models\Country::find($row->country_id);
+    $city = Nnjeim\World\Models\City::find($row->location_id);
+@endphp
+
 <!-- Job Block -->
+
 <div class="inner-box">
     <div class="content">
         @if($row->company && $company_logo = $row->getThumbnailUrl())
@@ -11,7 +17,9 @@
         </h4>
         <ul class="job-info">
            <li><span class="icon flaticon-briefcase"></span> {{ $row->name }}</li>
-            <li><span class="icon flaticon-map-locator"></span> {{ $row->name }}</li>
+           @if($country || $city)
+                <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? ''}}, {{ $city->name ?? '' }}</li>
+            @endif
             <li><span class="icon flaticon-clock-3"></span> {{ $row->timeAgo() }}</li>
             <li><span class="icon flaticon-money"></span> {{ $row->getSalary(false) }}</li>
             

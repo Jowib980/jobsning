@@ -13,6 +13,7 @@ use Modules\Job\Models\JobCandidate;
 use Modules\Job\Models\JobType;
 use Modules\Location\Models\Location;
 use Modules\Media\Models\MediaFile;
+use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller{
 
@@ -111,6 +112,15 @@ class JobController extends Controller{
         $data['style'] = $layout;
 
         $this->setActiveMenu($row);
+
+        if (Auth::check() && Auth::user()->role_id == 3) {
+            \App\JobView::firstOrCreate([
+                'job_id' => $row->id,
+                'candidate_id' => Auth::id(),
+            ]);
+        }
+
+
         return view('Job::frontend.detail', $data);
     }
 

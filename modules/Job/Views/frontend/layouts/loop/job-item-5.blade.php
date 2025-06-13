@@ -1,5 +1,7 @@
 @php
     $translation = $row->translateOrOrigin(app()->getLocale());
+    $country = Nnjeim\World\Models\Country::find($row->country_id);
+    $city = Nnjeim\World\Models\City::find($row->location_id);
 @endphp
 
 <div class="inner-box">
@@ -22,10 +24,10 @@
     @endif
     <span class="company-name">{{ $row->company->name ?? '' }}</span>
     <h4><a href="{{ $row->getDetailUrl() }}">{{ $translation->title }}</a></h4>
-    @if($row->location)
-        @php $location_translation = $row->location->translateOrOrigin(app()->getLocale()) @endphp
-        <div class="location"><span class="icon flaticon-map-locator"></span>{{ $location_translation->name }}</div>
-    @endif
+     @if($country || $city)
+                <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? ''}}, {{ $city->name ?? '' }}</li>
+            @endif
+            
     <ul class="post-tags">
         @if(!empty($row->skills))
             @php $counter = count($row->skills) - 3; @endphp

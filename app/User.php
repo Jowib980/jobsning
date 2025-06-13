@@ -23,7 +23,7 @@
     use Illuminate\Support\Facades\DB;
     use Illuminate\Database\Eloquent\SoftDeletes;
     use Illuminate\Support\Facades\Auth;
-    use Tymon\JWTAuth\Contracts\JWTSubject;
+    use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
     class User extends Authenticatable implements MustVerifyEmail,JWTSubject
     {

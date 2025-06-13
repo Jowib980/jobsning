@@ -19,6 +19,7 @@ use Modules\Job\Models\Job;
 use Modules\Core\Models\Attributes;
 use Modules\User\Models\User;
 use Modules\User\Models\UserViews;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends FrontendController
 {
@@ -206,6 +207,7 @@ class CompanyController extends FrontendController
             }
         }
         $row = new CandidateContact($request->input());
+        $row->user_id = Auth::id();
         $row->status = 'sent';
         if ($row->save()) {
             $this->sendEmail($row);

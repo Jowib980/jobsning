@@ -1,3 +1,8 @@
+@php
+    $country = Nnjeim\World\Models\Country::find($row->country_id);
+    $city = Nnjeim\World\Models\City::find($row->location_id);
+@endphp
+
 <!-- Job Overview -->
 <h4 class="widget-title">{{ __("Job Overview") }}</h4>
 <div class="widget-content">
@@ -17,11 +22,11 @@
             </li>
         @endif
         @if($row->location)
-            @php $location_translation = $row->location->translateOrOrigin(app()->getLocale()) @endphp
+            
             <li>
                 <i class="icon icon-location"></i>
                 <h5>{{ __("Location:") }}</h5>
-                <span>{{ $location_translation->name }}</span>
+                <span>{{ $country->name ?? '' }}, {{ $city->name ?? '' }}</span>
             </li>
         @endif
         @if($row->hours)

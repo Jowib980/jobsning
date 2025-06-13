@@ -13,6 +13,7 @@ use Modules\Company\Models\Company;
 use Modules\Company\Models\CompanyTranslation;
 use Modules\Location\Models\Location;
 use Modules\Core\Models\Attributes;
+use Illuminate\Support\Str;
 
 class CompanyController extends AdminController
 {
@@ -232,9 +233,24 @@ class CompanyController extends AdminController
         $input['team_size'] = !empty($input['team_size']) ? $input['team_size'] : 0;
 
         $row->fillByAttr($attr, $input);
-        if($request->input('slug')){
-            $row->slug = $request->input('slug');
+
+        if(empty($request->input('avatar_id'))) {
+            $row->avatar_id = "519";
         }
+
+        if (!empty($input['name'])) {
+            $baseSlug = Str::slug($input['name']);
+            $slug = $baseSlug;
+            $count = 1;
+
+            // Make sure slug is unique
+            while ($this->company::where('slug', $slug)->where('id', '!=', $row->id)->exists()) {
+                $slug = $baseSlug . '-' . $count++;
+            }
+
+            $row->slug = $slug;
+        }
+
         if(is_admin())
         {
             $row->owner_id = $input['owner_id'] ?? Auth::id();
@@ -351,8 +367,8 @@ class CompanyController extends AdminController
     function myContact(Request $request){
         $this->setActiveMenu('admin/module/company/my-contact');
         $query = CandidateContact::query()
-            ->where('contact_to', 'company')
-            ->where('origin_id', Auth::id());
+            // ->where('contact_to', 'company')
+            ->where('user_id', Auth::id());
 
         if($orderby = $request->get('orderby')){
             switch ($orderby){

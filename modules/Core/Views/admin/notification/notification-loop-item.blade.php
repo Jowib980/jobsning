@@ -5,6 +5,8 @@
 
         $idNotification = @$data->id;
         $forAdmin = @$data->for_admin;
+        $message = @$data->message;
+        $url = @$data->url;
         $usingData = @$data->notification;
 
         $services = @$usingData->type;
@@ -26,12 +28,13 @@
                     @if($avatar)
                         <img class="image-responsive" src="{{$avatar}}" alt="{{$name}}">
                     @else
-                        <span class="avatar-text">{{ucfirst($name[0])}}</span>
+                        <span class="avatar-text">{{ucfirst($name[0] ?? '')}}</span>
                     @endif
                 </div>
             </div>
             <div class="media-body">
                 <a class="{{$class}} p-0" data-id="{{$idNotification}}" href="{{$link}}">{!! $title !!}</a>
+                <a class="{{$class}} p-0" data-id="{{$idNotification}}" href="{{$url}}">{!! $message !!}</a>
                 <div class="notification-meta">
                     <small class="timestamp">{{format_interval($oneNotification->created_at)}}</small>
                 </div>

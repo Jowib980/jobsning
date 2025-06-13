@@ -5,8 +5,8 @@
         <div class="d-flex justify-content-between mb20">
             <h1 class="title-bar">{{__("User Profile")}}</h1>
             <div class="title-actions">
-                <a href="{{route('user.admin.create', ['candidate_create' => 1])}}" class="btn btn-primary">{{__("Edit Resume")}}</a>
-                 <a href="{{route('user.admin.create', ['candidate_create' => 1])}}" class="btn btn-primary">{{__("Download")}}</a>
+                <a href="{{route('candidate.admin.resume.edit', $data->candidate_id)}}" class="btn btn-primary">{{__("Edit Resume")}}</a>
+                 <a href="{{ route('candidate.admin.resume.download') }}" class="btn btn-primary">{{__("Download")}}</a>
             </div>
         </div>
 
@@ -14,58 +14,114 @@
             <div class="col-md-12">
                 <div class="panel">
                     <div class="panel-body">
-                        <div class="col-md-4" style="background-color: black; color: white;">
-                            <div class="profile-pic" style="padding: 10px; text-align: center;">
-                                <img src={{asset ('images/avatar.png') }} alt="Mubeen Ahmad" style="width: 150px; border-radius: 50%; margin: auto;">
+                        <div class="row">
+                        <div class="col-md-4 p-4" style="background-color: black; color: white;">
+                            <div class="profile-pic" style="padding: 10px;">
+                                <img src="{{ $data->getThumbnailUrl() ?? asset('images/avatar.png') }}" alt="Profile Picture" style="width: 200px; border-radius: 50%; margin: auto;">
                             </div>
-                            <h2 style="text-align: center;">Mubeen Ahmad</h2>
-                            <p class="title" style="text-align: center;">Web Developer</p>
+                            <h2>{{ $data->first_name }} {{ $data->last_name }}</h2>
+                            <p class="title">{{ $data->profile_title }}</p>
                             <ul class="contact-info">
-                                <li>mubeenahmad1920@gmail.com</li>
-                                <li>03000000000</li>
-                                <li><a href="#" style="color: white">muhammadmubeenahmad.me</a></li>
-                                <li><a href="#" style="color: white">linkedin.com/in/muhammad-mubeen-ahmad</a></li>
-                                <li><a href="#" style="color: white">github.com/muhammadmubeen17</a></li>
-                                <li><a href="#" style="color: white">twitter.com/MubeenA01417662</a></li>
+                                <li>{{ $data->email }}</li>
+                                <li>{{ $data->phone }}</li>
+                                <li><a href="#" style="color: white">{{ $data->website }}</a></li>
+                                <li><a href="#" style="color: white">{{ $data->linkedin }}</a></li>
+                                <li><a href="#" style="color: white">{{ $data->github }}</a></li>
+                                <li><a href="#" style="color: white">{{ $data->twitter }}</a></li>
                             </ul>
+                            @php
+                                $experiences = is_array($data->experience) 
+                                    ? $data->experience 
+                                    : json_decode($data->experience, true);
+                                $education = is_array($data->education) 
+                                    ? $data->education
+                                    : json_decode($data->education, true);
+                                $skills = is_array($data->skills)
+                                    ? $data->skills
+                                    : json_decode($data->skills, true);
+                                $languages = is_array($data->languages)
+                                    ? $data->languages
+                                    : json_decode($data->languages, true);
+                                $projects = is_array($data->projects)
+                                    ? $data->projects
+                                    : json_decode($data->projects, true);
+
+                            @endphp
                             <section class="education">
                                 <h3>EDUCATION</h3>
-                                <p><strong>Bachelors in Information Technology</strong><br>National Textile University<br>2019-10-01 – 2023-10-01</p>
-                                <p><strong>FSC Pre Engineering</strong><br>Kips College<br>2017-09-01 – 2019-09-01</p>
+                                @if(!empty($education))
+                                    @foreach ($education as $edu)
+                                        <p>
+                                            <strong>{{ $edu['reward'] ?? '' }} at {{ $edu['location'] ?? '' }}</strong><br>
+                                            {{ $edu['from'] ?? '' }} – {{ $edu['to'] ?? '' }}
+                                        </p>
+                                    @endforeach
+                                @else
+                                    <p>No education data available.</p>
+                                @endif
                             </section>
                             <section class="languages">
                                 <h3>LANGUAGES</h3>
-                                <p>ur (Native)</p>
-                                <p>en (Fluent)</p>
+                                @if(!empty($languages))
+                                    @foreach ($languages as $lang)
+                                        <p>
+                                            {{ $lang['language'] ?? '' }} {{ $lang['level']}}
+                                        </p>
+                                    @endforeach
+                                @else
+                                    <p>No Language data available.</p>
+                                @endif
                             </section>
                         </div>
-                        <div class="col-md-8">
-                            <section>
-                                <h3>CAREER PROFILE</h3>
-                                <p>Solution oriented web developer capable of contributing to a highly collaborative work environment...</p>
-                            </section>
+                        <div class="col-md-8 p-4">
                             <section>
                                 <h3>EXPERIENCES</h3>
-                                <p><strong>PHP / Laravel Developer</strong> <span class="date">2022-03-28 - 2022-11-30</span><br>
-                                Cyber Hawke<br>
-                                Worked as a Junior Web Developer and participated in coding, testing...</p>
+                                @if(!empty($experiences))
+                                    @foreach ($experiences as $exp)
+                                        <p>
+                                            <strong>{{ $exp['position'] ?? '' }} at {{ $exp['location'] ?? '' }}</strong><br>
+                                            {{ $exp['from'] ?? '' }} – {{ $exp['to'] ?? '' }}
+                                        </p>
+                                    @endforeach
+                                @else
+                                    <p>No experience data available.</p>
+                                @endif
                             </section>
                             <section>
                                 <h3>PROJECTS</h3>
-                                <p><strong>Natours</strong> – A website to plan and book travel arrangements...</p>
-                                <p><strong>Portfolio Website</strong> – A website that showcases a person's work...</p>
+                                    @if(!empty($projects))
+                                        @foreach ($projects as $project)
+                                            <p>
+                                                <strong>{{ $project['title'] ?? '' }}</strong> - {{ $project['description'] ?? ''}}
+                                            </p>
+                                        @endforeach
+                                    @else
+                                        <p>No projects data available.</p>
+                                    @endif
                             </section>
                             <section>
                                 <h3>SKILLS & PROFICIENCY</h3>
-                                <div class="skill-bar"><span>HTML</span><div class="bar html"></div></div>
-                                <div class="skill-bar"><span>CSS</span><div class="bar css"></div></div>
-                                <div class="skill-bar"><span>Bootstrap</span><div class="bar bootstrap"></div></div>
-                                <div class="skill-bar"><span>JavaScript</span><div class="bar js"></div></div>
-                                <div class="skill-bar"><span>jQuery</span><div class="bar jquery"></div></div>
-                                <div class="skill-bar"><span>PHP</span><div class="bar php"></div></div>
-                                <div class="skill-bar"><span>Laravel</span><div class="bar laravel"></div></div>
+                                @if(!empty($skills))
+                                    @foreach ($skills as $skill)
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <span>{{ $skill['name'] ?? '' }}</span> 
+                                        </div>
+                                        <div class="col-md-9"> 
+                                            <div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="progress-bar" style="width: {{ $skill['level'] }}%">@if(!empty($skill['level'])){{ $skill['level'] }}%
+                                                @endif</div>
+                                            </div>
+                                            <Br>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <p>No skills data available.</p>
+                                @endif
                             </section>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

@@ -134,7 +134,7 @@
                                 </div>
                             </div>
                         @endif
-{{--                        @include('Core::admin/seo-meta/seo-meta')--}}
+<!-- {{--                        @include('Core::admin/seo-meta/seo-meta')--}} -->
 
                         <div class="panel">
                             <div class="panel-title"><strong>{{ __('Education - Experience - Award')}}</strong></div>

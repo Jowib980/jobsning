@@ -80,6 +80,17 @@ class Job extends BaseModel
         return url(app_get_locale(false, false, '/') . config('job.job_route_prefix') . "/" . $this->slug);
     }
 
+    public function views()
+    {
+        return $this->hasMany(\App\JobView::class);
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(\Modules\Job\Models\JobCandidate::class, 'job_id');
+    }
+
+
     public function timeAgo() {
         if(empty($this->created_at)) return false;
         $estimate_time = strtotime('now') - strtotime($this->created_at);

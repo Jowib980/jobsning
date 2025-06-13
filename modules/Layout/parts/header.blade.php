@@ -122,7 +122,7 @@ if(empty($is_home) && $header_style == 'normal' && empty($disable_header_shadow)
                                     <a  href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{__('Logout')}}</a>
                                 </li>
                             </ul>
-                            <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
+                             <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
                                 {{ csrf_field() }}
                             </form>
                         </div>

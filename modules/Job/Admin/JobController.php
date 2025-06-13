@@ -12,11 +12,16 @@ use Modules\Job\Events\EmployerChangeApplicantsStatus;
 use Modules\Job\Exports\ApplicantsExport;
 use Modules\Job\Models\Job;
 use Modules\Job\Models\JobCandidate;
+use Modules\Candidate\Models\CandidateCategories;
+use Modules\Candidate\Models\Candidate;
 use Modules\Job\Models\JobTranslation;
 use Modules\Job\Models\JobType;
 use Modules\Language\Models\Language;
 use Modules\Location\Models\Location;
 use Modules\Skill\Models\Skill;
+use App\Notifications\NewJobPosted;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class JobController extends AdminController
 {
@@ -226,14 +231,26 @@ class JobController extends AdminController
             'video',
             'video_cover_id'
         ];
+
         if (!empty($input['wage_agreement'])){
             $input['salary_min'] = 0;
             $input['salary_max'] = 0;
         }
         $row->fillByAttr($attr, $input);
-        if($request->input('slug')){
-            $row->slug = $request->input('slug');
+        
+        if (!empty($input['title'])) {
+            $baseSlug = Str::slug($input['title']);
+            $slug = $baseSlug;
+            $count = 1;
+
+            // Make sure slug is unique
+            while (Job::where('slug', $slug)->where('id', '!=', $row->id)->exists()) {
+                $slug = $baseSlug . '-' . $count++;
+            }
+
+            $row->slug = $slug;
         }
+
         if(empty($request->input('create_user'))){
             $row->create_user = Auth::id();
         }
@@ -243,9 +260,55 @@ class JobController extends AdminController
                 $row->company_id = $user->company->id;
             }
         }
+        // default expiration date add if empty
+        if (empty($request->input('expiration_date'))) {
+            $row->expiration_date = \Carbon\Carbon::now()->addWeek()->toDateString();
+        }
+
+        if(empty($request->input('thumbnail_id'))) {
+            $row->thumbnail_id = "519";
+        }
 
         $res = $row->saveOriginOrTranslation($request->query('lang'),true);
         $row->skills()->sync($request->input('job_skills') ?? []);
+
+        $job_category_id = $request->input('category_id');
+
+        $job_location_id = $request->input('location_id');
+
+        $job_country_id = $request->input('country_id');
+
+        $job_state_id = $request->input('state_id');
+
+        $candidate_category = CandidateCategories::where('cat_id', $job_category_id)->get();
+         
+        foreach ($candidate_category as $candidate) {
+
+            $candidate_id = $candidate->origin_id;
+            $candidate_data = DB::table("bc_candidates")->where('id', $candidate_id)->first();
+            if (!$candidate_data) continue; // Skip if not found
+            
+            $candidate_location = $candidate_data->location_id;
+            $candidate_country = $candidate_data->country;
+            $candidate_city = $candidate_data->city;
+
+            // Compare only if both values are not null
+            $location_match = !is_null($job_location_id) && !is_null($candidate_location) && $job_location_id == $candidate_location;
+            $country_match = !is_null($job_country_id) && !is_null($candidate_country) && $job_country_id == $candidate_country;
+            $state_match = !is_null($job_state_id) && !is_null($candidate_city) && $job_state_id == $candidate_city;
+
+            if ($location_match || $country_match || $state_match) {
+                $user = User::find($candidate_id);
+
+                if($user) {
+                    $user_name = $user->name;
+                    $user_email = $user->email;
+
+                    $user->notify(new NewJobPosted($row));
+                }
+            }
+            
+        }
 
         if ($res) {
             if($id > 0 ){
@@ -259,7 +322,7 @@ class JobController extends AdminController
     public function bulkEdit(Request $request)
     {
         if(!is_admin() and !auth()->user()->checkJobPlan()){
-            return redirect(route('user.plan'));
+            return redirect(route('plan'));
         }
         $this->checkPermission('job_manage');
         $ids = $request->input('ids');
@@ -328,10 +391,17 @@ class JobController extends AdminController
         return view('Job::admin.job.all-applicants', $data);
     }
 
-    public function removeApplicant(Request $request, $id) {
-        dd($request->all());
+    public function removeApplicant($id) {
         $data = JobCandidate::find($id);
-        $data->delete();
+        if (!$this->hasPermission('job_manage_others')) {
+            $company_id = Auth::user()->company->id ?? '';
+            $query->where('company_id', $company_id);
+            $this->checkPermission('job_manage');
+        }
+
+        if(!empty($data)){
+            $data->delete();
+        }
 
         return redirect()->route('job.admin.allApplicants')->with('success', 'Delete applicant successfully');
     }
@@ -418,12 +488,178 @@ class JobController extends AdminController
         ]);
     }
 
-    public function removeExpireJob(Request $request, $id) {
-        dd($request->all());
+    public function removeExpireJob($id) {
         $data = Job::find($id);
         $data->delete();
 
-        return redirect()->route('job.admin.allApplicants')->with('success', 'Delete applicant successfully');
+        return redirect()->route('job.admin.index')->with('success', 'Delete job successfully');
+    }
+
+    public function jobStatusChange($status, $id){
+        $this->checkPermission('job_manage');
+
+        $row = Job::where('id', $id)->first();
+
+        if (empty($row)){
+            return redirect()->back()->with('error', __('Item not found!'));
+        }
+        $old_status = $row->status;
+        if($status != 'publish' && $status != 'draft' && $status != 'pause' && $status != 'closed'){
+            return redirect()->back()->with('error', __('Status unavailable'));
+        }
+        $row->status = $status;
+        $row->save();
+        if($old_status != $status) {
+            event(new EmployerChangeApplicantsStatus($row));
+        }
+
+        return redirect()->back()->with('success', __('Update success!'));
+    }
+
+    public function interviewSetup(Request $request, $id) {
+         $request->validate([
+            'interview_date' => 'required|date',
+            'interview_time' => 'required|date_format:H:i',
+        ]);
+
+        $candidate = JobCandidate::findOrFail($id);
+
+        $candidate->interview_date = $request->input('interview_date');
+        $candidate->interview_time = $request->input('interview_time');
+        $candidate->status = 'interview scheduled';
+        $candidate->save();
+
+        return redirect()->back()->with('success', __('Scheduled interview successfully!'));
+    }
+
+    public function jobOverview(Request $request) {
+        $this->checkPermission('job_manage');
+
+        $internships = Job::withCount('views', 'applications')
+        ->where('create_user', Auth::id())
+        ->where('job_type_id', 3)
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+
+        $jobs = Job::withCount('views', 'applications')
+            ->where('create_user', Auth::id())
+            ->where('job_type_id', '!=', 3)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
+    
+
+        $data = [
+            'internships' => $internships,
+            'jobs' => $jobs,
+        ];
+        
+        return view('Job::admin.job.overview', $data);
+    }
+
+    public function jobShortlisted(Request $request) {
+       
+        $this->setActiveMenu('admin/module/job/all-applicants');
+        $candidate_id = $request->query('candidate_id');
+        $rows = JobCandidate::with(['jobInfo', 'candidateInfo', 'cvInfo', 'company', 'company.getAuthor', 'candidateInfo.user', 'candidateInfo.skills', ])
+            ->whereHas('jobInfo', function ($q) use($request){
+                $job_id = $request->query('job_id');
+                $company_id = $request->query('company_id');
+                if (!$this->hasPermission('job_manage_others')) {
+                    $company_id = Auth::user()->company->id ?? '';
+                    $q->where('company_id', $company_id);
+                }
+                if( $company_id && $this->hasPermission('job_manage_others')){
+                    $q->where('company_id', $company_id);
+                }
+                if($job_id){
+                    $q->where("id", $job_id);
+                }
+            })->where('status', 'approved');
+
+        if( $candidate_id && $this->hasPermission('job_manage_others')){
+            $rows->where('candidate_id', $candidate_id);
+        }
+        
+        $rows = $rows->orderBy('id', 'desc')
+            ->paginate(20);
+
+        $data = [
+            'rows' => $rows,
+        ];
+
+        // dd($data);
+
+        return view('Job::admin.job.shortlisted', $data);
+
+    }
+
+    public function jobHired(Request $request) {
+       
+        $this->setActiveMenu('admin/module/job/all-applicants');
+        $candidate_id = $request->query('candidate_id');
+        $rows = JobCandidate::with(['jobInfo', 'candidateInfo', 'cvInfo', 'company', 'company.getAuthor', 'candidateInfo.user', 'candidateInfo.skills', ])
+            ->whereHas('jobInfo', function ($q) use($request){
+                $job_id = $request->query('job_id');
+                $company_id = $request->query('company_id');
+                if (!$this->hasPermission('job_manage_others')) {
+                    $company_id = Auth::user()->company->id ?? '';
+                    $q->where('company_id', $company_id);
+                }
+                if( $company_id && $this->hasPermission('job_manage_others')){
+                    $q->where('company_id', $company_id);
+                }
+                if($job_id){
+                    $q->where("id", $job_id);
+                }
+            })->where('status', 'hired');
+
+        if( $candidate_id && $this->hasPermission('job_manage_others')){
+            $rows->where('candidate_id', $candidate_id);
+        }
+        
+        $rows = $rows->orderBy('id', 'desc')
+            ->paginate(20);
+
+        $data = [
+            'rows' => $rows,
+        ];
+        return view('Job::admin.job.hired', $data);
+
+    }
+
+    public function jobNotInterested(Request $request) {
+       
+        $this->setActiveMenu('admin/module/job/all-applicants');
+        $candidate_id = $request->query('candidate_id');
+        $rows = JobCandidate::with(['jobInfo', 'candidateInfo', 'cvInfo', 'company', 'company.getAuthor', 'candidateInfo.user', 'candidateInfo.skills', ])
+            ->whereHas('jobInfo', function ($q) use($request){
+                $job_id = $request->query('job_id');
+                $company_id = $request->query('company_id');
+                if (!$this->hasPermission('job_manage_others')) {
+                    $company_id = Auth::user()->company->id ?? '';
+                    $q->where('company_id', $company_id);
+                }
+                if( $company_id && $this->hasPermission('job_manage_others')){
+                    $q->where('company_id', $company_id);
+                }
+                if($job_id){
+                    $q->where("id", $job_id);
+                }
+            })->where('status', 'rejected');
+
+        if( $candidate_id && $this->hasPermission('job_manage_others')){
+            $rows->where('candidate_id', $candidate_id);
+        }
+        
+        $rows = $rows->orderBy('id', 'desc')
+            ->paginate(20);
+
+        $data = [
+            'rows' => $rows,
+        ];
+        return view('Job::admin.job.not-interested', $data);
+
     }
 
 }

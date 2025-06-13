@@ -1,3 +1,8 @@
+@php
+    $country = Nnjeim\World\Models\Country::find($row->country_id);
+    $city = Nnjeim\World\Models\City::find($row->location_id);
+@endphp
+
 <!-- Job Block-three -->
 
 <div class="inner-box">
@@ -10,7 +15,9 @@
         <h4><a href="{{ $row->getDetailUrl() }}">{{ $row->title }}</a></h4>
         <ul class="job-info">
            <li><span class="icon flaticon-briefcase"></span> {{ $row->name }}</li>
-           <li><span class="icon flaticon-map-locator"></span> {{ $row->location->name }}</li>
+            @if($country || $city)
+                <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? ''}}, {{ $city->name ?? '' }}</li>
+            @endif
             
         </ul>
     </div>

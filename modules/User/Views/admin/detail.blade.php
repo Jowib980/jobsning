@@ -90,7 +90,7 @@
                             </div>
                         </div>
 
-                        @include('Core::admin/seo-meta/seo-meta', ['row' => ($row->candidate ?? $candidate)])
+                        <!-- @include('Core::admin/seo-meta/seo-meta', ['row' => ($row->candidate ?? $candidate)]) -->
                     @endif
                 </div>
 

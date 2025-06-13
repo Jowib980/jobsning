@@ -1,5 +1,7 @@
 @php
     $translation = $row->translateOrOrigin(app()->getLocale());
+    $country = Nnjeim\World\Models\Country::find($row->country);
+    $city = Nnjeim\World\Models\City::find($row->city);
 @endphp
 <div class="company-block-three">
     <div class="inner-box">
@@ -12,9 +14,8 @@
                 </span>
                 <h4><a href="{{$row->getDetailUrl()}}">{!! clean($translation->name) !!}</a></h4>
                 <ul class="job-info">
-                    @if($row->location)
-                        @php $location_translation = $row->location->translateOrOrigin(app()->getLocale()); @endphp
-                        <li><span class="icon flaticon-map-locator"></span> {{ $location_translation->name }}</li>
+                    @if($country || $city)
+                        <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? ''}}, {{ $city->name ?? '' }}</li>
                     @endif
                     @php $category = $row->category; @endphp
                     @if(!empty($category))

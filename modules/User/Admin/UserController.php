@@ -71,7 +71,8 @@ class UserController extends AdminController
                     'name'=>__("Users"),
                     'url'=>'admin/module/user'
                 ]
-            ]
+            ],
+            'countries' => \Nnjeim\World\Models\Country::all()
         ];
         return view('User::admin.detail', $data);
     }
@@ -79,12 +80,28 @@ class UserController extends AdminController
     public function edit(Request $request, $id)
     {
         $row = User::find($id);
+        
         if (empty($row)) {
             return redirect('admin/module/user');
         }
         if ($row->id != Auth::user()->id and !Auth::user()->hasPermission('user_manage')) {
             abort(403);
         }
+
+        $candidateData = Candidate::where('id', $id)->first();
+        
+        $selected_country_id = $candidateData->country;
+
+        $selected_state_id = $candidateData->city;
+
+        $states = $selected_country_id
+            ? \Nnjeim\World\Models\State::where('country_id', $selected_country_id)->get()
+            : collect();
+
+        $cities = $selected_state_id
+            ? \Nnjeim\World\Models\City::where('state_id', $selected_state_id)->get()
+            : collect();
+
         $data = [
             'row'   => $row,
             'roles' => Role::all(),
@@ -101,7 +118,13 @@ class UserController extends AdminController
                     'name'=>__("Edit User: #:id",['id'=>$row->id]),
                     'class' => 'active'
                 ],
-            ]
+            ],
+            'countries' => \Nnjeim\World\Models\Country::all(),
+            'states' => $states,
+            'cities' => $cities,
+            'selectedCountry' => $candidateData->country ?? null,
+            'selectedState' => $candidateData->city ?? null,
+            'selectedCity' => $candidateData->location_id ?? null,
         ];
         return view('User::admin.detail', $data);
     }
@@ -269,7 +292,11 @@ class UserController extends AdminController
                     'video_cover_id'
 
                 ], $request->input());
-//                    $cData->save();
+                
+                $cData['languages'] = implode(',', $request->input('languages', []));
+
+                // dd($cData);
+                   $cData->save();
                 $cData->saveOriginOrTranslation($request->query('lang'),true);
 
 

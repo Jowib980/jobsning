@@ -101,7 +101,7 @@
     @if($row->video)
     <!-- Video Box -->
         <div class="video-outer">
-            <h4>{{__('Candidates About')}}</h4>
+            <!-- <h4>{{__('Candidates About')}}</h4> -->
             <div class="video-box">
                 <figure class="image">
                     <a href="{{$row->video}}" class="play-now" data-fancybox="gallery" data-caption="">

@@ -22,6 +22,7 @@ use Modules\Location\Models\Location;
 use Modules\Skill\Models\Skill;
 use Modules\User\Models\User;
 use Modules\User\Models\UserViews;
+use Modules\Language\Models\Languages;
 
 class CandidateController extends FrontendController
 {
@@ -39,6 +40,15 @@ class CandidateController extends FrontendController
         $markers = [];
         if (!empty($list)) {
             foreach ($list as $row) {
+                $country = \Nnjeim\World\Models\Country::find($row->country);
+                 $selectedCountry = $country ? $country->name : null;
+
+                $state = \Nnjeim\World\Models\State::find($row->city);
+                  $selectedState = $state ? $state->name : null;
+
+                $city = \Nnjeim\World\Models\City::find($row->location_id);
+                $selectedCity = $city ? $city->name : null;
+
                 $markers[] = [
                     "id"      => $row->id,
                     "title"   => $row->title,
@@ -48,9 +58,13 @@ class CandidateController extends FrontendController
                     "infobox" => view('Candidate::frontend.layouts.details.candidate-marker-infobox', ['row' => $row,'disable_lazyload'=>1,'wrap_class'=>'infobox-item'])->render(),
 //                    'marker'  => asset('images/icons/png/pin.png'),
                     'customMarker' => view('Candidate::frontend.layouts.details.candidate-marker-avatar', ['row' => $row,'disable_lazyload'=>1])->render(),
+                    "country" => $selectedCountry,
+                    "state" => $selectedState,
+                    "city" => $selectedCity
                 ];
             }
         }
+
 
         $limit_location = 1000;
         $data = [
@@ -62,9 +76,9 @@ class CandidateController extends FrontendController
             "filter"             => $request->query('filter'),
             "seo_meta"           => Candidate::getSeoMetaForPageList(),
             'markers'            => $markers,
-            'countries' => \Nnjeim\World\Models\Country::all()
-        ];
+            'countries' => \Nnjeim\World\Models\Country::all(),
 
+        ];
         $layout = setting_item('candidate_list_layout', 'v1');
         $style = "candidate-list-$layout";
         $demo_layout = $request->get('_layout');
@@ -75,6 +89,7 @@ class CandidateController extends FrontendController
         $data['style'] = $style;
         $data['layout'] = $demo_layout ? $demo_layout : 'v1';
         if ($data['layout'] == 'v5') $data['footer_null'] = true;
+
 
         return view('Candidate::frontend.index', $data);
     }
@@ -92,6 +107,10 @@ class CandidateController extends FrontendController
 
         $translation = $row->translateOrOrigin(app()->getLocale());
 
+        $selectedLanguageIds = explode(',', $row->languages ?? '');
+        $languageNames = Languages::whereIn('id', $selectedLanguageIds)->pluck('name')->toArray();
+        
+
         $data = [
             'row'               => $row,
             'translation'       => $translation,
@@ -101,6 +120,7 @@ class CandidateController extends FrontendController
             "gallery"           => $row->getGallery(true),
             'header_transparent'=>true,
             'seo_meta'          => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),
+            'languages'         => implode(', ', $languageNames)
         ];
 
         $layout = setting_item('candidate_single_layout', 'v1');
@@ -114,6 +134,8 @@ class CandidateController extends FrontendController
         $this->setActiveMenu($row);
 
         get_user_view($row->id);
+
+        // dd($data);
 
         return view('Candidate::frontend.detail', $data);
     }
@@ -143,7 +165,9 @@ class CandidateController extends FrontendController
             }
         }
         $row = new CandidateContact($request->input());
+        $row->user_id = Auth::id();
         $row->status = 'sent';
+        // dd($row);
         if ($row->save()) {
             $this->sendEmail($row);
             $data = [

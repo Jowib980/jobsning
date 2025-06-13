@@ -2,6 +2,8 @@
 @php
     $translation = $row->translateOrOrigin(app()->getLocale());
     $view_profile = (!empty($hide_profile)) ? 0 : 1;
+    $country = Nnjeim\World\Models\Country::find($row->country);
+    $city = Nnjeim\World\Models\City::find($row->location_id);
 @endphp
 <div class="inner-box">
     <div class="content">
@@ -14,7 +16,7 @@
                 <li class="designation">{{$row->title}}</li>
             @endif
             @if($row->city)
-                <li><span class="icon flaticon-map-locator"></span> {{$row->city}}</li>
+                <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? ''}}, {{ $city->name ?? '' }}</li>
             @endif
             @if($row->expected_salary)
                 <li><span class="icon flaticon-money"></span> {{$row->expected_salary}} {{currency_symbol()}}  / {{$row->salary_type}}</li>

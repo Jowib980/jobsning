@@ -52,7 +52,7 @@
                 <label>{{__("City")}}</label>
                 <input type="text" value="{{old('city',$row->city)}}" name="city" placeholder="{{__("City")}}" class="form-control">
             </div>
-        </div> -->
+        </div> 
         <div class="col-md-6">
             <div class="form-group">
                 <label>{{__("Country")}}</label>
@@ -67,10 +67,10 @@
             </div>
         </div>
         <div class="col-md-6">
-            <!-- <div class="form-group">
+             <div class="form-group">
                 <label>{{__("State")}}</label>
                 <input type="text" value="{{old('state',$row->state)}}" name="state" placeholder="{{__("State")}}" class="form-control">
-            </div> -->
+            </div> 
             <div class="form-group">
                 <label>{{__("State")}}</label>
                 <select id="state_select" name="state" class="form-control">
@@ -98,7 +98,7 @@
                 </select>
             </div>
         </div>
-        <!-- <div class="col-md-6">
+         <div class="col-md-6">
             <div class="form-group">
                 <label class="">{{__("Country")}}</label>
                 <select name="country" class="form-control" id="country-sms-testing">
@@ -134,9 +134,8 @@
     </div>
 
 
-
+<!-- 
 <script type="text/javascript">
-    
 document.addEventListener('DOMContentLoaded', function () {
     const selectedState = '{{ $selectedState }}';
     const selectedCity = '{{ $selectedCity }}';
@@ -193,5 +192,4 @@ document.addEventListener('DOMContentLoaded', function () {
         loadStates($country.val(), selectedState);
     }
 });
-
-</script>
+</script> -->

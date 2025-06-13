@@ -31,3 +31,16 @@ Route::get('/category/getForSelect2','CompanyCategoryController@getForSelect2')-
 Route::get('/category/edit/{id}','CompanyCategoryController@edit')->name('company.admin.category.edit');
 Route::post('/category/store/{id}','CompanyCategoryController@store')->name('company.admin.category.store');
 Route::post('/category/bulkEdit','CompanyCategoryController@bulkEdit')->name('company.admin.category.bulkEdit');
+
+
+// Get states by country ID
+Route::get('/get-states/{country_id}', function ($country_id) {
+    $country = \Nnjeim\World\Models\Country::with('states')->find($country_id);
+    return $country ? $country->states : [];
+});
+
+// Get cities by state ID
+Route::get('/get-cities/{state_id}', function ($state_id) {
+    $state = \Nnjeim\World\Models\State::with('cities')->find($state_id);
+    return $state ? $state->cities : [];
+});

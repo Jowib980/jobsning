@@ -1,5 +1,9 @@
     @php
+     use Modules\Language\Models\Languages;
+
         $candidate = $row->candidate;
+        $allLanguages = Languages::all();
+        $selectedLanguages = explode(',', $candidate->languages ?? '');
     @endphp
     <div class="row">
         <div class="col-md-6">
@@ -69,9 +73,20 @@
         </div>
 
         <div class="col-md-6">
-            <div class="form-group">
+           <!--  <div class="form-group">
                 <label>{{__("Language")}}</label>
                 <input type="text" value="{{old('languages',@$candidate->languages)}}" name="languages" placeholder="{{__("Language")}}" class="form-control">
+            </div> -->
+            <div class="form-group">
+                <label>{{ __("Language") }}</label>
+                <select name="languages[]" multiple="multiple" id="languages" class="form-control select2">
+                    @foreach($allLanguages as $language)
+                        <option value="{{ $language->id }}" 
+                            @if(in_array($language->id, $selectedLanguages)) selected @endif>
+                            {{ $language->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
@@ -107,3 +122,14 @@
 
 
 
+
+@section ('script.body')
+    {!! App\Helpers\MapEngine::scripts() !!}
+<script>
+    $(document).ready(function() {
+        $(document).ready(function() {
+            $('#languages').select2();
+        });
+    });
+</script>
+@endsection

@@ -1,22 +1,58 @@
     @php
         $candidate = $row->candidate;
+        $selectedCountry = $selectedCountry ?? old('country_id');
+        $selectedState = $selectedState ?? old('state_id');
+        $selectedCity = $selectedCity ?? old('location_id');
+        $states = $states ?? collect();
+        $cities = $cities ?? collect();
     @endphp
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group">
                 <label class="">{{__("Country")}}</label>
-                <select name="country" class="form-control" id="country-sms-testing">
+                <!-- <select name="country" class="form-control" id="country-sms-testing">
                     <option value="">{{__('-- Select --')}}</option>
                     @foreach(get_country_lists() as $id=>$name)
                         <option @if(@$candidate->country==$id) selected @endif value="{{$id}}">{{$name}}</option>
                     @endforeach
+                </select>-->  
+                <select id="country_select" name="country" class="form-control">
+                    <option value="">{{ __("Select Country") }}</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id }}" {{ old('country', $selectedCountry) == $country->id ? 'selected' : '' }}>
+                                {{ $country->name }}
+                            </option>
+                        @endforeach
+                </select>          
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>{{__("State")}}</label>
+                <!-- <input type="text" value="{{old('city',@$candidate->city)}}" name="city" placeholder="{{__("City")}}" class="form-control"> -->
+                <select id="state_select" name="city" class="form-control">
+                    <option value="">{{ __("Select State") }}</option>
+                        {{-- Options will be populated dynamically --}}
+                        @foreach($states as $state)
+                            <option value="{{ $state->id }}" {{ old('city', $selectedState) == $state->id ? 'selected' : '' }}>
+                               {{ $state->name }}
+                            </option>
+                        @endforeach
                 </select>
             </div>
         </div>
-        <div class="col-md-6">
+         <div class="col-md-4">
             <div class="form-group">
                 <label>{{__("City")}}</label>
-                <input type="text" value="{{old('city',@$candidate->city)}}" name="city" placeholder="{{__("City")}}" class="form-control">
+                <select id="city_select" name="location_id" class="form-control">
+                    <option value="">{{ __("Select City") }}</option>
+                        {{-- Options will be populated dynamically --}}
+                        @foreach($cities as $city)
+                            <option value="{{ $city->id }}" {{ old('location_id', $selectedCity) == $city->id ? 'selected' : '' }}>
+                                {{ $city->name }}
+                            </option>
+                         @endforeach
+                </select>
             </div>
         </div>
         <div class="col-md-12">
@@ -26,56 +62,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label">{{__("Location")}}</label>
-        @if(!empty($is_smart_search))
-            <div class="form-group-smart-search">
-                <div class="form-content">
-                    <?php
-                    $location_name = "";
-                    $list_json = [];
-                    $traverse = function ($locations, $prefix = '') use (&$traverse, &$list_json , &$location_name, $candidate) {
-                        foreach ($locations as $location) {
-                            $translate = $location->translateOrOrigin(app()->getLocale());
-                            if (@$candidate->location_id == $location->id){
-                                $location_name = $translate->name;
-                            }
-                            $list_json[] = [
-                                'id' => $location->id,
-                                'title' => $prefix . ' ' . $translate->name,
-                            ];
-                            $traverse($location->children, $prefix . '-');
-                        }
-                    };
-                    $traverse($locations);
-                    ?>
-                    <div class="smart-search">
-                        <input type="text" class="smart-search-location parent_text form-control" placeholder="{{__("-- Please Select --")}}" value="{{ $location_name }}" data-onLoad="{{__("Loading...")}}"
-                               data-default="{{ json_encode($list_json) }}">
-                        <input type="hidden" class="child_id" name="location_id" value="{{@$candidate->location_id ?? Request::query('location_id')}}">
-                    </div>
-                </div>
-            </div>
-        @else
-            <div class="">
-                <select name="location_id" class="form-control">
-                    <option value="">{{__("-- Please Select --")}}</option>
-                    <?php
-                    $traverse = function ($locations, $prefix = '') use (&$traverse, $candidate) {
-                        foreach ($locations as $location) {
-                            $selected = '';
-                            if (@$candidate->location_id == $location->id)
-                                $selected = 'selected';
-                            printf("<option value='%s' %s>%s</option>", $location->id, $selected, $prefix . ' ' . $location->name);
-                            $traverse($location->children, $prefix . '-');
-                        }
-                    };
-                    $traverse($locations);
-                    ?>
-                </select>
-            </div>
-        @endif
-    </div>
+   
     <div class="form-group">
         <label class="control-label">{{__("The geographic coordinate")}}</label>
         <div class="control-map-group">
@@ -99,4 +86,61 @@
     </div>
 
 
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    const selectedState = '{{ $selectedState }}';
+    const selectedCity = '{{ $selectedCity }}';
 
+    const $country = $('#country_select');
+    const $state = $('#state_select');
+    const $city = $('#city_select');
+
+    function loadStates(countryId, preselect = null) {
+        $state.html('<option value="">{{ __("Select State") }}</option>');
+        $city.html('<option value="">{{ __("Select City") }}</option>');
+
+        if (countryId) {
+            fetch(`/get-states/${countryId}`)
+                .then(res => res.json())
+                .then(states => {
+                    states.forEach(state => {
+                        let selected = preselect == state.id ? 'selected' : '';
+                        $state.append(`<option value="${state.id}" ${selected}>${state.name}</option>`);
+                    });
+
+                    if (preselect) {
+                        loadCities(preselect, selectedCity);
+                    }
+                });
+        }
+    }
+
+    function loadCities(stateId, preselect = null) {
+        $city.html('<option value="">{{ __("Select City") }}</option>');
+        if (stateId) {
+            fetch(`/get-cities/${stateId}`)
+                .then(res => res.json())
+                .then(cities => {
+                    cities.forEach(city => {
+                        let selected = preselect == city.id ? 'selected' : '';
+                        $city.append(`<option value="${city.id}" ${selected}>${city.name}</option>`);
+                    });
+                });
+        }
+    }
+
+    // On change
+    $country.on('change', function () {
+        loadStates(this.value);
+    });
+
+    $state.on('change', function () {
+        loadCities(this.value);
+    });
+
+    // On edit page load
+    if ($country.val()) {
+        loadStates($country.val(), selectedState);
+    }
+});
+</script>

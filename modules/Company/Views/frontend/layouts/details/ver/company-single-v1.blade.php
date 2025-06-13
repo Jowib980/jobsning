@@ -1,3 +1,7 @@
+@php
+    $country = Nnjeim\World\Models\Country::find($row->country);
+    $city = Nnjeim\World\Models\City::find($row->city);
+@endphp
 <div class="bravo-companies job-detail-section">
     <div class="upper-box">
         <div class="auto-container">
@@ -12,10 +16,9 @@
                         </span>
                         <h4><a href="{{$row->getDetailUrl()}}">{{ $translation->name }}</a></h4>
                         <ul class="job-info">
-                            @if($row->location)
-                                @php $location =  $row->location->translateOrOrigin(app()->getLocale()) @endphp
-                                <li><span class="icon flaticon-map-locator"></span> {{ $location->name }}</li>
-                            @endif
+                            @if($country || $city)
+                            <li><span class="icon flaticon-map-locator"></span>{{ $country->name ?? ''}}, {{ $city->name ?? '' }}</li>
+                        @endif
                             @if($row->category)
                                 @php $t = $row->category->translateOrOrigin(app()->getLocale()); @endphp
                                 <li><span class="icon flaticon-briefcase"></span> {{ $t->name }}</li>

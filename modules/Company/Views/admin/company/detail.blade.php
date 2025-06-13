@@ -37,7 +37,7 @@
                         <div class="panel">
                             <div class="panel-title"><strong>{{__("Company Location")}}</strong></div>
                             <div class="panel-body">
-                                    <div class="form-group">
+                                <div class="form-group">
                                         <label class="control-label">{{__("Location")}}</label>
                                         @if(!empty($is_smart_search))
                                             <div class="form-group-smart-search">
@@ -78,10 +78,10 @@
 
                                             <div class="row form-group col-lg-12 col-md-12 col-sm-12">
                                                 <div class="form-group col-lg-4">
-                                                    <select id="country_select" name="country_id" class="form-control">
+                                                    <select id="country_select" name="country" class="form-control">
                                                         <option value="">{{ __("Select Country") }}</option>
                                                         @foreach($countries as $country)
-                                                            <option value="{{ $country->id }}" {{ old('country_id', $selectedCountry) == $country->id ? 'selected' : '' }}>
+                                                            <option value="{{ $country->id }}" {{ old('country', $selectedCountry) == $country->id ? 'selected' : '' }}>
                                                                 {{ $country->name }}
                                                             </option>
                                                         @endforeach
@@ -89,11 +89,11 @@
                                                 </div>
 
                                                  <div class="form-group col-lg-4">
-                                                    <select id="state_select" name="state_id" class="form-control">
+                                                    <select id="state_select" name="state" class="form-control">
                                                         <option value="">{{ __("Select State") }}</option>
                                                         {{-- Options will be populated dynamically --}}
                                                         @foreach($states as $state)
-                                                            <option value="{{ $state->id }}" {{ old('state_id', $selectedState) == $state->id ? 'selected' : '' }}>
+                                                            <option value="{{ $state->id }}" {{ old('state', $selectedState) == $state->id ? 'selected' : '' }}>
                                                                 {{ $state->name }}
                                                             </option>
                                                         @endforeach
@@ -101,11 +101,11 @@
                                                 </div>
 
                                                 <div class="form-group col-lg-4">
-                                                    <select id="city_select" name="location_id" class="form-control">
+                                                    <select id="city_select" name="city" class="form-control">
                                                         <option value="">{{ __("Select City") }}</option>
                                                         {{-- Options will be populated dynamically --}}
                                                          @foreach($cities as $city)
-                                                            <option value="{{ $city->id }}" {{ old('location_id', $selectedCity) == $city->id ? 'selected' : '' }}>
+                                                            <option value="{{ $city->id }}" {{ old('city', $selectedCity) == $city->id ? 'selected' : '' }}>
                                                                 {{ $city->name }}
                                                             </option>
                                                         @endforeach
@@ -140,7 +140,7 @@
                             </div>
                         </div>
                         @endif
-                        @include('Core::admin/seo-meta/seo-meta')
+                        <!-- @include('Core::admin/seo-meta/seo-meta') -->
                     </div>
 
                     <div class="col-md-3">
@@ -283,54 +283,7 @@
 @section('script.body')
     {!! App\Helpers\MapEngine::scripts() !!}
     <script>
-        $(document).ready(function() {
-            $('#category_id').select2();
-        });
-        jQuery(function ($) {
-            new BravoMapEngine('map_content', {
-                disableScripts: true,
-                fitBounds: true,
-                center: [{{$row->map_lat ?? "51.505"}}, {{$row->map_lng ?? "-0.09"}}],
-                zoom:{{$row->map_zoom ?? "8"}},
-                ready: function (engineMap) {
-                    @if($row->map_lat && $row->map_lng)
-                    engineMap.addMarker([{{$row->map_lat}}, {{$row->map_lng}}], {
-                        icon_options: {}
-                    });
-                    @endif
-                    engineMap.on('click', function (dataLatLng) {
-                        engineMap.clearMarkers();
-                        engineMap.addMarker(dataLatLng, {
-                            icon_options: {}
-                        });
-                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
-                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
-                    });
-                    engineMap.on('zoom_changed', function (zoom) {
-                        $("input[name=map_zoom]").attr("value", zoom);
-                    });
-                    engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
-                        engineMap.clearMarkers();
-                        engineMap.addMarker(dataLatLng, {
-                            icon_options: {}
-                        });
-                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
-                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
-                    });
-                    engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
-                        engineMap.clearMarkers();
-                        engineMap.addMarker(dataLatLng, {
-                            icon_options: {}
-                        });
-                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
-                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
-                    });
-                }
-            });
-        })
 
-
-        
         document.addEventListener('DOMContentLoaded', function () {
             const selectedState = '{{ $selectedState }}';
             const selectedCity = '{{ $selectedCity }}';
@@ -387,6 +340,54 @@
                 loadStates($country.val(), selectedState);
             }
         });
+
+
+        $(document).ready(function() {
+            $('#category_id').select2();
+        });
+        jQuery(function ($) {
+            new BravoMapEngine('map_content', {
+                disableScripts: true,
+                fitBounds: true,
+                center: [{{$row->map_lat ?? "51.505"}}, {{$row->map_lng ?? "-0.09"}}],
+                zoom:{{$row->map_zoom ?? "8"}},
+                ready: function (engineMap) {
+                    @if($row->map_lat && $row->map_lng)
+                    engineMap.addMarker([{{$row->map_lat}}, {{$row->map_lng}}], {
+                        icon_options: {}
+                    });
+                    @endif
+                    engineMap.on('click', function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
+                    });
+                    engineMap.on('zoom_changed', function (zoom) {
+                        $("input[name=map_zoom]").attr("value", zoom);
+                    });
+                    engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
+                    });
+                    engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
+                    });
+                }
+            });
+        });
+
 
 
     </script>

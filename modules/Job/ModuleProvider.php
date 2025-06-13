@@ -37,6 +37,11 @@ class ModuleProvider extends ModuleServiceProvider
                 'icon'       => 'ion-ios-briefcase',
                 'permission' => 'job_manage',
                 'children'   => [
+                    'job_overview'=>[
+                        'url'        => 'admin/module/job/overview',
+                        'title'      => __("Overview"),
+                        'permission' => 'job_manage'
+                    ],
                     'job_view'=>[
                         'url'        => 'admin/module/job',
                         'title'      => __("All Jobs"),
@@ -57,14 +62,37 @@ class ModuleProvider extends ModuleServiceProvider
                         'title'      => __("Category"),
                         'permission' => 'job_manage_others'
                     ],
+                    
                 ]
             ],
             'job_type'=>[
                 'url'        => 'admin/module/job/all-applicants',
-                'title'      => __("All Applicants"),
+                'title'      => __("Applicants"),
                 'permission' => 'job_manage',
                 "position" => 25,
-                'icon'       => 'ion-ios-briefcase'
+                'icon'       => 'ion-ios-briefcase',
+                'children'   => [
+                     'job_view'=>[
+                        'url'        => 'admin/module/job/all-applicants',
+                        'title'      => __("All Applicants"),
+                        'permission' => 'job_manage',
+                    ],
+                    'job_shortlisted'=>[
+                        'url'        => 'admin/module/job/shortlisted',
+                        'title'      => __("Shortlisted"),
+                        'permission' => 'job_manage'
+                    ],
+                    'job_hired'=>[
+                        'url'        => 'admin/module/job/hired',
+                        'title'      => __("Hired"),
+                        'permission' => 'job_manage'
+                    ],
+                    'job_not_interested'=>[
+                        'url'        => 'admin/module/job/not-interested',
+                        'title'      => __("Not Interested"),
+                        'permission' => 'job_manage'
+                    ],
+                ]
             ]
 
         ];
