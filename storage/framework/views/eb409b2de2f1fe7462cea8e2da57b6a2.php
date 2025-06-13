@@ -122,52 +122,7 @@
                         <strong>Education Information</strong>
                     </div>
                     <div class="panel-body">
-                        <!-- <div id="education-container">
-                            <div class="education-group">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label><?php echo e(__("Degree")); ?></label>
-                                            <input type="text" name="degree[]" placeholder="<?php echo e(__("Degree")); ?>" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label><?php echo e(__("Institute Name")); ?></label>
-                                            <input type="text" name="institute[]" placeholder="<?php echo e(__("Institute")); ?>" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label><?php echo e(__("Start Date")); ?></label>
-                                            <input type="date" name="start_date[]" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label><?php echo e(__("End Date")); ?></label>
-                                            <input type="date" name="end_date[]" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label><?php echo e(__("CGPA/Percentage")); ?></label>
-                                            <div class="input-group">
-                                                <input type="text" name="cgpa/percentage[]" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 text-right">
-                                    <button type="button" class="btn btn-danger remove-education-group" style="display:none;">Remove</button>
-                                </div>
-                            </div>
-                        </div> -->
-
+                       
                          <div id="education-container">
                                 <?php $__empty_1 = true; $__currentLoopData = $education_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $edu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <div class="education-group">
@@ -282,56 +237,7 @@
                             </div>
                         </div>
 
-                        <!-- Section to show only if "Experienced" is selected -->
-                       <!--  <div class="experience-fields" style="display: none;">
-                            <div id="experience-container">
-                                <div class="experience-group">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label><?php echo e(__("Job Title")); ?></label>
-                                                <input type="text" name="job_title[]" placeholder="<?php echo e(__("Job Title")); ?>" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label><?php echo e(__("Organization")); ?></label>
-                                                <input type="text" name="organization[]" placeholder="<?php echo e(__("Organization Name")); ?>" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label><?php echo e(__("Start Date")); ?></label>
-                                                <input type="date" name="job_start_date[]" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label><?php echo e(__("End Date")); ?></label>
-                                                <input type="date" name="job_end_date[]" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label><?php echo e(__("Job Description")); ?></label>
-                                                <input type="text" name="job_desc[]" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 text-right">
-                                            <button type="button" class="btn btn-danger remove-experience-group" style="display:none;">Remove</button>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button type="button" id="add-experience" class="btn btn-primary pull-right">Add More</button>
-                                </div>
-                            </div>
-                        </div> -->
-
+                       
                         <div class="experience-fields" style="display: none;">
                             <div id="experience-container">
                                 <?php $__empty_1 = true; $__currentLoopData = $experience_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $exp): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
@@ -492,7 +398,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label><?php echo e(__("Percentage")); ?></label>
-                                                <input type="number" name="percentage[]" class="form-control">
+                                                <input type="number" name="skill_percentage[]" class="form-control">
                                             </div>
                                         </div>
                                         

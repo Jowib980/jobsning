@@ -84,7 +84,7 @@
                                         </p>
                                     @endforeach
                                 @else
-                                    <p>No experience data available.</p>
+                                    <p>{{ $data->experience_type }}</p>
                                 @endif
                             </section>
                             <section>

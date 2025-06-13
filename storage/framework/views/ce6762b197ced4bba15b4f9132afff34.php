@@ -3,7 +3,7 @@
 <?php $__env->startSection('content'); ?>
     <div class="container-fluid">
         <div class="d-flex justify-content-between mb20">
-            <h1 class="title-bar"><?php echo e(__("Build Your Resume")); ?></h1>
+            <h1 class="title-bar"><?php echo e(__("Edit Your Resume")); ?></h1>
             <!-- <div class="title-actions"> -->
                 <!-- <a href="<?php echo e(route('user.admin.create', ['candidate_create' => 1])); ?>" class="btn btn-primary"><?php echo e(__("Upload Resume")); ?></a> -->
             <!-- </div> -->
@@ -13,8 +13,8 @@
         <div class="row">
             <div class="col-md-12">
 
-                <form method="post" action="<?php echo e(route('candidate.admin.resume.create')); ?>">
-                    <?php echo csrf_field(); ?>
+                <form method="post" action="<?php echo e(route('candidate.admin.resume.update', $data->id)); ?>">
+                    <?php echo csrf_field(); ?> 
 
 <!-- personal info section start -->
  
@@ -27,30 +27,30 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label><?php echo e(__("First Name")); ?></label>
-                                    <input <input type="text" value="<?php echo e(old('first_name', $user->first_name ?? '')); ?>" name="first_name" placeholder="<?php echo e(__('First Name')); ?>" class="form-control">
+                                    <input <input type="text" value="<?php echo e(old('first_name', $data->first_name ?? '')); ?>" name="first_name" placeholder="<?php echo e(__('First Name')); ?>" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label><?php echo e(__("Last Name")); ?></label>
-                                    <input type="text" value="<?php echo e(old('last_name',$user->last_name ?? '')); ?>" name="last_name" placeholder="<?php echo e(__("Last Name")); ?>" class="form-control">
+                                    <input type="text" value="<?php echo e(old('last_name',$data->last_name ?? '')); ?>" name="last_name" placeholder="<?php echo e(__("Last Name")); ?>" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <?php echo \Modules\Media\Helpers\FileHelper::fieldUpload('profile_picture'); ?>
+                                    <?php echo \Modules\Media\Helpers\FileHelper::fieldUpload('profile_picture',$data->profile_picture); ?>
 
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label><?php echo e(__("Profile Title")); ?></label>
-                                    <input type="text" value="<?php echo e(old('title',$candidate->title ?? '')); ?>" name="profile_title" placeholder="<?php echo e(__("Profile Title")); ?>" class="form-control">
+                                    <input type="text" value="<?php echo e(old('profile_title',$data->profile_title ?? '')); ?>" name="profile_title" placeholder="<?php echo e(__("Profile Title")); ?>" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label><?php echo e(__("About")); ?></label>
                                     <div class="input-group">
-                                        <textarea name="about" class="form-control"></textarea>
+                                        <textarea name="about" class="form-control"><?php echo e(old('about', $data->about ?? '')); ?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -72,19 +72,19 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label><?php echo e(__("Email")); ?></label>
-                                    <input type="email"name="email" placeholder="<?php echo e(__("Email")); ?>" value="<?php echo e(old('email',$user->email ?? '')); ?>" class="form-control">
+                                    <input type="email"name="email" placeholder="<?php echo e(__("Email")); ?>" value="<?php echo e(old('email',$data->email ?? '')); ?>" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label><?php echo e(__("Phone Number")); ?></label>
-                                    <input type="tel" name="phone" placeholder="<?php echo e(__("Phone Number")); ?>" value="<?php echo e(old('phone',$user->phone ?? '')); ?>" class="form-control">
+                                    <input type="tel" name="phone" placeholder="<?php echo e(__("Phone Number")); ?>" value="<?php echo e(old('phone',$data->phone ?? '')); ?>" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label><?php echo e(__("LinkedIn")); ?></label>
-                                    <input type="app_url" name="linkedin" placeholder="<?php echo e(__("Linkedin url")); ?>" class="form-control">
+                                    <input type="app_url" name="linkedin" placeholder="<?php echo e(__("Linkedin url")); ?>" value="<?php echo e(old('linkedin',$data->linkedin ?? '')); ?>"class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -92,19 +92,19 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label><?php echo e(__("Github")); ?></label>
-                                    <input type="app_url" name="github" placeholder="<?php echo e(__("Github url")); ?>" class="form-control">
+                                    <input type="app_url" name="github" placeholder="<?php echo e(__("Github url")); ?>" value="<?php echo e(old('github',$data->github ?? '')); ?>"class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label><?php echo e(__("Twitter")); ?></label>
-                                    <input type="app_url" name="twitter" placeholder="<?php echo e(__("Twitter url")); ?>" class="form-control">
+                                    <input type="app_url" name="twitter" placeholder="<?php echo e(__("Twitter url")); ?>" value="<?php echo e(old('twitter',$data->twitter ?? '')); ?>"class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label><?php echo e(__("Website")); ?></label>
-                                    <input type="app_url" name="website" placeholder="<?php echo e(__("Website url")); ?>" class="form-control">
+                                    <input type="app_url" name="website" placeholder="<?php echo e(__("Website url")); ?>" value="<?php echo e(old('website',$data->website ?? '')); ?>"class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -114,6 +114,24 @@
  
   <!-- contact detail section end -->
 
+                            <?php
+                                $experience_data = is_array($data->experience) 
+                                    ? $data->experience 
+                                    : (json_decode($data->experience, true) ?? []);
+                                $education_data = is_array($data->education) 
+                                    ? $data->education
+                                    : (json_decode($data->education, true) ?? []);
+                                $skills = is_array($data->skills)
+                                    ? $data->skills
+                                    : (json_decode($data->skills, true) ?? []);
+                                $languages = is_array($data->languages)
+                                    ? $data->languages
+                                    : (json_decode($data->languages, true) ?? []);
+                                $projects = is_array($data->projects)
+                                    ? $data->projects
+                                    : (json_decode($data->projects, true) ?? []);
+
+                            ?>
 
   <!-- education detail section start -->
 
@@ -154,7 +172,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label><?php echo e(__("CGPA/Percentage")); ?></label>
-                                                    <input type="text" name="cgpa_percentage[]" class="form-control">
+                                                    <input type="text" name="cgpa_percentage[]" class="form-control" value="<?php echo e($edu['information'] ?? ''); ?>">
                                                 </div>
                                             </div>
                                             <div class="col-md-12 text-right">
@@ -183,13 +201,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label><?php echo e(__("Start Date")); ?></label>
-                                                    <input type="text" name="job_start_date[]" class="form-control" value="">
+                                                    <input type="text" name="start_date[]" class="form-control" value="">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label><?php echo e(__("End Date")); ?></label>
-                                                    <input type="text" name="job_end_date[]" class="form-control" value="">
+                                                    <input type="text" name="end_date[]" class="form-control" value="">
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -345,6 +363,29 @@
                     </div>
                     <div class="panel-body">
                        <div id="project-container">
+                            <?php $__empty_1 = true; $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <div class="project-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label><?php echo e(__("Project Title")); ?></label>
+                                                <input type="text" name="project_title[]" value="<?php echo e($project['title'] ?? ''); ?>" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label><?php echo e(__("Project Description")); ?></label>
+                                                <textarea type="text" name="project_desc[]"class="form-control"><?php echo e($project->description ?? ''); ?></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-12 text-right">
+                                            <button type="button" class="btn btn-danger remove-project-group" style="display:none;">Remove</button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <div class="project-group">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -366,6 +407,7 @@
                                     </div>
                                     <hr>
                                 </div>
+                            <?php endif; ?>
                             </div>
 
                             <div class="row">
@@ -386,6 +428,7 @@
                     </div>
                     <div class="panel-body">
                        <div id="skill-container">
+                        
                          <?php $__empty_1 = true; $__currentLoopData = $skills; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <div class="skill-group">
                                     <div class="row">
@@ -398,7 +441,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label><?php echo e(__("Percentage")); ?></label>
-                                                <input type="number" name="percentage[]" class="form-control">
+                                                <input type="number" name="skill_percentage[]" value="<?php echo e($skill['level'] ?? ''); ?>" class="form-control">
                                             </div>
                                         </div>
                                         
@@ -431,6 +474,7 @@
                                     <hr>
                                 </div>
                             <?php endif; ?>
+                            
                             </div>
 
                             <div class="row">
@@ -451,7 +495,35 @@
                     </div>
                     <div class="panel-body">
                        <div id="language-container">
+                        <?php $__empty_1 = true; $__currentLoopData = $languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $lang): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <div class="language-group">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label><?php echo e(__("Add Language")); ?></label>
+                                                <input type="text" name="language[]" value="<?php echo e($lang['language'] ?? ''); ?>" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label><?php echo e(__("Level")); ?></label>
+                                                <select class="form-control" id="language_level" name="language_level[]">
+                                                    <option value=""><?php echo e(__("Select Level")); ?></option>
+                                                    <option value="native" <?php echo e((isset($lang['level']) && $lang['level'] == 'native') ? 'selected' : ''); ?>><?php echo e(__("Native")); ?></option>
+                                                    <option value="fluent" <?php echo e((isset($lang['level']) && $lang['level'] == 'fluent') ? 'selected' : ''); ?>><?php echo e(__("Fluent")); ?></option>
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-12 text-right">
+                                            <button type="button" class="btn btn-danger remove-lang-group" style="display:none;">Remove</button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                            <div class="language-group">
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
@@ -476,6 +548,7 @@
                                     </div>
                                     <hr>
                                 </div>
+                            <?php endif; ?>
                             </div>
 
                             <div class="row">
@@ -634,4 +707,4 @@
             </script>
 
   <?php $__env->stopSection(); ?>
-<?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\jobsning\modules/Candidate/Views/admin/resume/form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\jobsning\modules\Candidate\Views\admin\resume\edit.blade.php ENDPATH**/ ?>

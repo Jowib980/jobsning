@@ -87,7 +87,7 @@
                                         </p>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php else: ?>
-                                    <p>No experience data available.</p>
+                                    <p><?php echo e($data->experience_type); ?></p>
                                 <?php endif; ?>
                             </section>
                             <section>

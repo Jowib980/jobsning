@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between mb20">
             <h1 class="title-bar"><?php echo e(__("User Profile")); ?></h1>
             <div class="title-actions">
-                <a href="<?php echo e(route('user.admin.create', ['candidate_create' => 1])); ?>" class="btn btn-primary"><?php echo e(__("Edit Resume")); ?></a>
+                <a href="<?php echo e(route('candidate.admin.resume.edit', $data->candidate_id)); ?>" class="btn btn-primary"><?php echo e(__("Edit Resume")); ?></a>
                  <a href="<?php echo e(route('candidate.admin.resume.download')); ?>" class="btn btn-primary"><?php echo e(__("Download")); ?></a>
             </div>
         </div>
@@ -16,11 +16,11 @@
                     <div class="panel-body">
                         <div class="row">
                         <div class="col-md-4 p-4" style="background-color: black; color: white;">
-                            <div class="profile-pic" style="padding: 10px; text-align: center;">
-                                <img src="<?php echo e($data->getThumbnailUrl() ?? asset('images/avatar.png')); ?>" alt="Profile Picture" tyle="width: 150px; border-radius: 50%; margin: auto;">
+                            <div class="profile-pic" style="padding: 10px;">
+                                <img src="<?php echo e($data->getThumbnailUrl() ?? asset('images/avatar.png')); ?>" alt="Profile Picture" style="width: 200px; border-radius: 50%; margin: auto;">
                             </div>
-                            <h2 style="text-align: center;"><?php echo e($data->first_name); ?> <?php echo e($data->last_name); ?></h2>
-                            <p class="title" style="text-align: center;"><?php echo e($data->profile_title); ?></p>
+                            <h2><?php echo e($data->first_name); ?> <?php echo e($data->last_name); ?></h2>
+                            <p class="title"><?php echo e($data->profile_title); ?></p>
                             <ul class="contact-info">
                                 <li><?php echo e($data->email); ?></li>
                                 <li><?php echo e($data->phone); ?></li>
@@ -47,12 +47,12 @@
                                     : json_decode($data->projects, true);
 
                             ?>
-                            <section class="education text-center">
+                            <section class="education">
                                 <h3>EDUCATION</h3>
                                 <?php if(!empty($education)): ?>
                                     <?php $__currentLoopData = $education; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $edu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <p>
-                                            <strong><?php echo e($edu['position'] ?? ''); ?> at <?php echo e($edu['location'] ?? ''); ?></strong><br>
+                                            <strong><?php echo e($edu['reward'] ?? ''); ?> at <?php echo e($edu['location'] ?? ''); ?></strong><br>
                                             <?php echo e($edu['from'] ?? ''); ?> – <?php echo e($edu['to'] ?? ''); ?>
 
                                         </p>
@@ -61,7 +61,7 @@
                                     <p>No education data available.</p>
                                 <?php endif; ?>
                             </section>
-                            <section class="languages text-center">
+                            <section class="languages">
                                 <h3>LANGUAGES</h3>
                                 <?php if(!empty($languages)): ?>
                                     <?php $__currentLoopData = $languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lang): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>

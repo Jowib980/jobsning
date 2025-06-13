@@ -49,7 +49,7 @@
                                 <div class="form-group">
                                     <label>{{__("About")}}</label>
                                     <div class="input-group">
-                                        <textarea name="about" class="form-control" value="{{old('about',$data->about ?? '')}}"></textarea>
+                                        <textarea name="about" class="form-control">{{ old('about', $data->about ?? '') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -374,7 +374,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>{{ __("Project Description") }}</label>
-                                                <textarea type="text" name="project_desc[]" value="{{ $project['description'] ?? '' }}" class="form-control"></textarea>
+                                                <textarea name="project_desc[]"class="form-control">{{ $project['description'] ?? '' }}</textarea>
                                             </div>
                                         </div>
                                         

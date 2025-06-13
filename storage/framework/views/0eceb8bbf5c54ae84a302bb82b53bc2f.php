@@ -50,7 +50,7 @@
                                 <div class="form-group">
                                     <label><?php echo e(__("About")); ?></label>
                                     <div class="input-group">
-                                        <textarea name="about" class="form-control" value="<?php echo e(old('about',$data->about ?? '')); ?>"></textarea>
+                                        <textarea name="about" class="form-control"><?php echo e(old('about', $data->about ?? '')); ?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -375,7 +375,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label><?php echo e(__("Project Description")); ?></label>
-                                                <textarea type="text" name="project_desc[]" value="<?php echo e($project['description'] ?? ''); ?>" class="form-control"></textarea>
+                                                <textarea name="project_desc[]"class="form-control"><?php echo e($project['description'] ?? ''); ?></textarea>
                                             </div>
                                         </div>
                                         

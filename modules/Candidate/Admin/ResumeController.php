@@ -234,24 +234,29 @@ class ResumeController extends AdminController
         }
         $data->education = json_encode($educations);
 
-        // === EXPERIENCE
-        $experiences = [];
-        $titles = $request->input('job_title', []);
-        $orgs = $request->input('organization', []);
-        $jobStartDates = $request->input('job_start_date', []);
-        $jobEndDates = $request->input('job_end_date', []);
-        $descs = $request->input('job_desc', []);
+       if ($request->input('experience_type') == 'fresher') {
+            $data->experience = null; // or '' if it's a string column
+        } else {
+            $experiences = [];
+            $titles = $request->input('job_title', []);
+            $orgs = $request->input('organization', []);
+            $jobStartDates = $request->input('job_start_date', []);
+            $jobEndDates = $request->input('job_end_date', []);
+            $descs = $request->input('job_desc', []);
 
-        foreach ($titles as $i => $title) {
-            $experiences[] = [
-                'from' => $jobStartDates[$i] ?? '',
-                'to' => $jobEndDates[$i] ?? '',
-                'location' => $orgs[$i] ?? '',
-                'position' => $title,
-                'information' => $descs[$i] ?? '',
-            ];
+            foreach ($titles as $i => $title) {
+                $experiences[] = [
+                    'from' => $jobStartDates[$i] ?? '',
+                    'to' => $jobEndDates[$i] ?? '',
+                    'location' => $orgs[$i] ?? '',
+                    'position' => $title,
+                    'information' => $descs[$i] ?? '',
+                ];
+            }
+
+            $data->experience = json_encode($experiences);
         }
-        $data->experience = json_encode($experiences);
+
         $data->experience_type = $request->input('experience_type');
 
         // === PROJECTS
