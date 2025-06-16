@@ -46,7 +46,6 @@
                                 $country = $job ? Nnjeim\World\Models\Country::find($job->country_id) : null;
                                 $city = $job ? Nnjeim\World\Models\City::find($job->location_id) : null;
                             @endphp
-
                             @if($job)
                                 <tr>
                                     <td><input type="checkbox" name="ids[]" value="{{ $wishlist->id }}" class="check-item"></td>
@@ -61,7 +60,6 @@
                                 </tr>
                             @endif
                         @endforeach
-
                         </tbody>
                     </table>
                     </div>
