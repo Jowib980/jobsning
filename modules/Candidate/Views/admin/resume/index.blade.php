@@ -5,8 +5,8 @@
         <div class="d-flex justify-content-between mb20">
             <h1 class="title-bar">{{__("User Profile")}}</h1>
             <div class="title-actions">
-                <a href="{{route('candidate.admin.resume.edit', $data->candidate_id)}}" class="btn btn-primary">{{__("Edit Resume")}}</a>
-                 <a href="{{ route('candidate.admin.resume.download') }}" class="btn btn-primary">{{__("Download")}}</a>
+                <a href="{{route('candidate.admin.resume.edit', $data->id)}}" class="btn btn-primary">{{__("Edit Resume")}}</a>
+                 <a href="{{ route('candidate.admin.resume.download', $data->id) }}" class="btn btn-primary">{{__("Download")}}</a>
             </div>
         </div>
 

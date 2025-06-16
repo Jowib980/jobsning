@@ -52,7 +52,7 @@
 
                                     </span>
                                 </td>
-                                <td><button class="btn btn-success">Views (<?php echo e($internship->views_count); ?>)</button></td>
+                                <td><button class="btn btn-success" style="cursor: not-allowed !important;">Views (<?php echo e($internship->views_count); ?>)</button></td>
                                 <td>
                                     <a href="<?php echo e(route('job.admin.allApplicants', ['job_id' => $internship->id])); ?>" class="btn btn-info text-white">
                                         Applicants (<?php echo e($internship->applications_count); ?>)

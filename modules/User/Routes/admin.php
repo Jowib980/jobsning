@@ -58,3 +58,4 @@ Route::group(['prefix'=>'plan'],function (){
     Route::post('/bulkEdit','PlanController@bulkEdit')->name('user.admin.plan.bulkEdit');
     Route::get('/getForSelect2','PlanController@getForSelect2')->name('user.admin.plan.getForSelect2');
 });
+

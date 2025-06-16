@@ -5,8 +5,8 @@
         <div class="d-flex justify-content-between mb20">
             <h1 class="title-bar"><?php echo e(__("User Profile")); ?></h1>
             <div class="title-actions">
-                <a href="<?php echo e(route('candidate.admin.resume.edit', $data->candidate_id)); ?>" class="btn btn-primary"><?php echo e(__("Edit Resume")); ?></a>
-                 <a href="<?php echo e(route('candidate.admin.resume.download')); ?>" class="btn btn-primary"><?php echo e(__("Download")); ?></a>
+                <a href="<?php echo e(route('candidate.admin.resume.edit', $data->id)); ?>" class="btn btn-primary"><?php echo e(__("Edit Resume")); ?></a>
+                 <a href="<?php echo e(route('candidate.admin.resume.download', $data->id)); ?>" class="btn btn-primary"><?php echo e(__("Download")); ?></a>
             </div>
         </div>
 
@@ -87,7 +87,7 @@
                                         </p>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php else: ?>
-                                    <p>No experience data available.</p>
+                                    <p><?php echo e($data->experience_type); ?></p>
                                 <?php endif; ?>
                             </section>
                             <section>

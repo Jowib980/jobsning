@@ -65,8 +65,26 @@
                                                     @endif
                                                 </td>
                                                 <td> {{ display_date($row->created_at) }}</td>
-                                                <td>
+                                                <!-- <td>
                                                     <span class="badge badge-{{ $row->status }}">{{ $row->status }}</span>
+                                                </td> -->
+                                                <td>
+                                                    @php
+                                                        $badgeClass = 'badge-';
+                                                        $customStyle = '';
+
+                                                        if ($row->status === 'hired') {
+                                                            $customStyle = 'background-color: #28a745; color: white;';
+                                                        } elseif ($row->status === 'interview scheduled') {
+                                                            $customStyle = 'background-color: #f49c2d; color: white;';
+                                                        } else {
+                                                            $badgeClass .= $row->status; // fallback to default class
+                                                        }
+                                                    @endphp
+
+                                                    <span class="badge {{ $badgeClass }}" style="{{ $customStyle }}">
+                                                        {{ $row->status }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     @if($row->status == 'pending')

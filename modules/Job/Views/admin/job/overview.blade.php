@@ -51,7 +51,7 @@
                                         {{ $internship->status }}
                                     </span>
                                 </td>
-                                <td><button class="btn btn-success">Views ({{ $internship->views_count }})</button></td>
+                                <td><button class="btn btn-success" style="cursor: not-allowed !important;">Views ({{ $internship->views_count }})</button></td>
                                 <td>
                                     <a href="{{ route('job.admin.allApplicants', ['job_id' => $internship->id]) }}" class="btn btn-info text-white">
                                         Applicants ({{ $internship->applications_count }})
@@ -102,7 +102,7 @@
                                         {{ $job->status }}
                                     </span>
                                 </td>
-                                <td><button class="btn btn-success">Views ({{ $job->views_count }})</button></td>
+                                <td><button class="btn btn-success" style="cursor: not-allowed !important;">Views ({{ $job->views_count }})</button></td>
                                 <td>
                                     <a href="{{ route('job.admin.allApplicants', ['job_id' => $job->id]) }}" class="btn btn-info text-white">
                                         Applicants ({{ $job->applications_count }})

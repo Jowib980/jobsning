@@ -662,4 +662,29 @@ class JobController extends AdminController
 
     }
 
+    public function applicantBulkEdit(Request $request)
+    {
+        if(!is_admin() and !is_employer()){
+            abort(403);
+        }
+        $this->checkPermission('job_manage');
+        $ids = $request->input('ids');
+        $action = $request->input('action');
+        if (empty($ids) or !is_array($ids)) {
+            return redirect()->back()->with('error', __('No items selected!'));
+        }
+        if (empty($action)) {
+            return redirect()->back()->with('error', __('Please select an action!'));
+        }
+        if ($action == "delete") {
+            foreach ($ids as $id) {
+                $query = JobCandidate::where("id", $id)->first();
+                if(!empty($query)){
+                    $query->delete();
+                }
+            }
+        }
+        return redirect()->back()->with('success', __('Delete success!'));
+    }
+
 }

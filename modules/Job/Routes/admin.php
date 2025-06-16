@@ -39,6 +39,7 @@ Route::get('/overview','JobController@jobOverview')->name('job.admin.overview');
 Route::get('/shortlisted','JobController@jobShortlisted')->name('job.admin.shortlisted');
 Route::get('/hired','JobController@jobHired')->name('job.admin.hired');
 Route::get('/not-interested','JobController@jobNotInterested')->name('job.admin.not-interested');
+Route::post('/applicantbulkEdit','JobController@applicantBulkEdit')->name('job.admin.applicantBulkEdit');
 
 // Get states by country ID
 Route::get('/get-states/{country_id}', function ($country_id) {

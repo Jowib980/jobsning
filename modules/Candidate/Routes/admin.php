@@ -28,7 +28,14 @@ Route::get('/my-contact','CandidateController@myContact')->name('candidate.admin
 
 Route::get('/resume-build','ResumeController@resumeBuild')->name('candidate.admin.resume.form');
 Route::post('/resume-create','ResumeController@resumeStore')->name('candidate.admin.resume.create');
-Route::get('/resume','ResumeController@index')->name('candidate.admin.resume.index');
-Route::get('/resume/download', 'ResumeController@downloadPdf')->name('candidate.admin.resume.download');
+Route::get('/resume/{id}','ResumeController@index')->name('candidate.admin.resume.index');
+Route::get('/resume/download/{id}', 'ResumeController@downloadPdf')->name('candidate.admin.resume.download');
 Route::get('/resume-edit/{id}','ResumeController@edit')->name('candidate.admin.resume.edit');
 Route::post('/resume-update/{id}','ResumeController@update')->name('candidate.admin.resume.update');
+Route::get('/resume-list', 'ResumeController@resumeList')->name('candidate.admin.resume.list');
+Route::post('/bulkEdit', 'ResumeController@bulkEdit')->name('candidate.admin.resume.bulkEdit');
+
+
+
+Route::get('/saved-jobs', 'CandidateWishlistController@index')->name('candidate.admin.savedjobs.index');
+Route::post('/savedjobs-bulkEdit', 'CandidateWishlistController@bulkEdit')->name('candidate.admin.savedjobs.delete');

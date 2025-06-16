@@ -375,7 +375,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label><?php echo e(__("Project Description")); ?></label>
-                                                <textarea type="text" name="project_desc[]"class="form-control"><?php echo e($project->description ?? ''); ?></textarea>
+                                                <textarea name="project_desc[]"class="form-control"><?php echo e($project['description'] ?? ''); ?></textarea>
                                             </div>
                                         </div>
                                         

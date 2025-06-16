@@ -81,6 +81,10 @@ class ResumeController extends AdminController
         $row->twitter = $request->input('twitter');
         $row->website = $request->input('website');
 
+        if(empty($row->profile_picture)) {
+            $row->profile_picture = "519";
+        }
+
         // === EDUCATION
         $educations = [];
         $degrees = $request->input('degree', []);
@@ -163,18 +167,28 @@ class ResumeController extends AdminController
 
         $row->save();
 
-        return redirect()->route('candidate.admin.resume.index')->with('success', 'Resume saved successfully!');
+        return redirect()->route('candidate.admin.resume.index', ['id' => $row->id])
+                 ->with('success', 'Resume saved successfully!');
+
     }
 
-    public function index(Request $request) {
-        $data = Resume::where('candidate_id', Auth::id())->first();
+    public function index(Request $request, $id) {
+        $data = Resume::where('id', $id)->first();
         // dd($data);
         return view('Candidate::admin.resume.index', compact('data'));
     }
 
-    public function downloadPdf()
+    public function resumeList(Request $request) {
+        $data = Resume::where('candidate_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        // dd($data);
+        return view('Candidate::admin.resume.list', compact('data'));
+    }
+
+    public function downloadPdf($id)
     {
-        $data = Resume::where('candidate_id', auth()->id())->first();
+        $data = Resume::where('id', $id)->first();
 
         if (!$data) abort(404);
 
@@ -183,6 +197,10 @@ class ResumeController extends AdminController
         $skills = json_decode($data->skills ?? '[]', true);
         $languages = json_decode($data->languages ?? '[]', true);
         $projects = json_decode($data->projects ?? '[]', true);
+
+        if(empty($data->profile_picture)) {
+            $data->profile_picture = "519";
+        }
 
         // get media file path (you might need to resolve based on media ID)
         $media = \Modules\Media\Models\MediaFile::find($data->profile_picture);
@@ -194,7 +212,7 @@ class ResumeController extends AdminController
     }
 
     public function edit($id) {
-        $data = Resume::where('candidate_id', $id)->first();
+        $data = Resume::where('id', $id)->first();
         // dd($data);
         return view('Candidate::admin.resume.edit', compact('data'));
     }
@@ -214,6 +232,10 @@ class ResumeController extends AdminController
         $data->github = $request->input('github');
         $data->twitter = $request->input('twitter');
         $data->website = $request->input('website');
+
+        if(empty($data->profile_picture)) {
+            $data->profile_picture = "519";
+        }
 
         // === EDUCATION
         $educations = [];
@@ -301,7 +323,34 @@ class ResumeController extends AdminController
 
         $data->save();
 
-        return redirect()->route('candidate.admin.resume.index')->with('success', 'Resume saved successfully!');
+        return redirect()->route('candidate.admin.resume.index', ['id' => $data->id])
+                 ->with('success', 'Resume update successfully!');
+
+    }
+
+    public function bulkEdit(Request $request)
+    {
+        if (!is_candidate()) {
+            abort(403);
+        }
+
+        $ids = $request->input('ids');
+        $action = $request->input('action');
+        if (empty($ids) or !is_array($ids)) {
+            return redirect()->back()->with('error', __('No items selected!'));
+        }
+        if (empty($action)) {
+            return redirect()->back()->with('error', __('Please select an action!'));
+        }
+        if ($action == "delete") {
+            foreach ($ids as $id) {
+                $query = Resume::where("id", $id)->first();
+                if(!empty($query)){
+                    $query->delete();
+                }
+            }
+        }
+        return redirect()->back()->with('success', __('Delete success!'));
     }
 
 

@@ -30,7 +30,9 @@
                         {{recaptcha_field('contact')}}
                     </div>
                     <div class="col-lg-12 col-md-12 col-sm-12 form-group">
-                        <button class="theme-btn btn-style-one" type="submit" name="submit-form">{{__('Send Message')}}</button>
+                        <button class="theme-btn btn-style-one" type="submit" name="submit-form">{{__('Send Message')}} 
+            <span class="spinner-grow spinner-grow-sm icon-loading" role="status" aria-hidden="true"></span></button>
+
                     </div>
                 </div>
                 <div class="col-sm-12 mt-3">

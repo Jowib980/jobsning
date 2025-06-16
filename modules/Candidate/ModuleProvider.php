@@ -71,9 +71,16 @@ class ModuleProvider extends ModuleServiceProvider
                 ];
                 $candidate_menus['resume_build'] = [
                      "position"=> 31,
-                    'url'        => route('candidate.admin.resume.form'),
-                    'title'      => __("Resume Builder"),
+                    'url'        => route('candidate.admin.resume.list'),
+                    'title'      => __("Resume"),
                     'icon'       => 'ion-md-document',
+                    'permission' => 'candidate_manage',
+                ];
+                $candidate_menus['saved_jobs'] = [
+                     "position"=> 32,
+                    'url'        => route('candidate.admin.savedjobs.index'),
+                    'title'      => __("Saved Jobs"),
+                    'icon'       => 'ion-md-bookmarks',
                     'permission' => 'candidate_manage',
                 ];
             }
