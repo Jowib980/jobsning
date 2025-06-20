@@ -148,7 +148,7 @@
                         <div class="panel-title"><strong>{{__('Categories')}}</strong></div>
                         <div class="panel-body">
                             <div class="form-group">
-                                <select id="categories" class="form-control" name="categories[]" multiple="multiple">
+                                <select id="categories" class="form-control select2" name="categories[]" multiple="multiple">
                                     <option value="">{{__("-- Please Select --")}}</option>
                                     <?php
                                     foreach ($categories as $oneCategories) {
@@ -175,7 +175,7 @@
                         <div class="panel-body">
                             <div class="form-group">
                                 <div class="">
-                                    <select id="skills" name="skills[]" class="form-control" multiple="multiple">
+                                    <select id="skills" name="skills[]" class="form-control select2" multiple="multiple">
                                         <option value="">{{__("-- Please Select --")}}</option>
                                         <?php
                                         foreach ($skills as $oneSkill) {
@@ -283,9 +283,8 @@
     {!! App\Helpers\MapEngine::scripts() !!}
     <script>
         @if($row->hasRole('candidate') || !empty($candidate_create))
-        $(document).ready(function() {
-            $('#categories').select2();
-            $('#skills').select2();
+       $(document).ready(function() {
+            $('.select2').select2();
         });
 
         let mapLat = {{ !empty($row->candidate) ? ($row->candidate->map_lat ?? "51.505") : "51.505" }};

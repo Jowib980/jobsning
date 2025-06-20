@@ -65,29 +65,29 @@
 
                                 <div class="form-group col-lg-3">
                                     <select id="country_select" name="country" class="form-control">
-                                        <option value="">{{ __("Select Country") }}</option>
+                                        <option value="">{{ __(" Country") }}</option>
                                         @foreach($countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                 <div class="form-group col-lg-3">
+                                 <div class="form-group col-lg-2">
                                     <select id="state_select" name="state" class="form-control">
-                                        <option value="">{{ __("Select State") }}</option>
+                                        <option value="">{{ __(" State") }}</option>
                                         {{-- Options will be populated dynamically --}}
                                     </select>
                                 </div>
 
                                 <div class="form-group col-lg-2">
                                     <select id="city_select" name="city" class="form-control">
-                                        <option value="">{{ __("Select City") }}</option>
+                                        <option value="">{{ __(" City") }}</option>
                                         {{-- Options will be populated dynamically --}}
                                     </select>
                                 </div>
 
                                 <!-- Form Group -->
-                                <div class="form-group col-lg-2 col-md-12 col-sm-12 btn-box">
+                                <div class="form-group col-lg-3 col-md-12 col-sm-12 btn-box">
                                     <button type="submit" class="theme-btn btn-style-seven"><span class="btn-title">{{ __("Find Jobs") }}</span></button>
                                 </div>
                             </div>

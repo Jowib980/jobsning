@@ -47,10 +47,8 @@
                                 $country = $job ? Nnjeim\World\Models\Country::find($job->country_id) : null;
                                 $city = $job ? Nnjeim\World\Models\City::find($job->location_id) : null;
                             ?>
-
                             <?php if($job): ?>
                                 <tr>
-                                    
                                     <td><input type="checkbox" name="ids[]" value="<?php echo e($wishlist->id); ?>" class="check-item"></td>
                                     <td class="title">
                                         <a href="<?php echo e(url('admin/module/user/edit/' . $job->slug)); ?>"><?php echo e($job->title ?? ''); ?></a>
@@ -64,7 +62,6 @@
                                 </tr>
                             <?php endif; ?>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
                         </tbody>
                     </table>
                     </div>

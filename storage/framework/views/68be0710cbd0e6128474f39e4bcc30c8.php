@@ -65,29 +65,29 @@
 
                                 <div class="form-group col-lg-3">
                                     <select id="country_select" name="country" class="form-control">
-                                        <option value=""><?php echo e(__("Select Country")); ?></option>
+                                        <option value=""><?php echo e(__(" Country")); ?></option>
                                         <?php $__currentLoopData = $countries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $country): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($country->id); ?>"><?php echo e($country->name); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
 
-                                 <div class="form-group col-lg-3">
+                                 <div class="form-group col-lg-2">
                                     <select id="state_select" name="state" class="form-control">
-                                        <option value=""><?php echo e(__("Select State")); ?></option>
+                                        <option value=""><?php echo e(__(" State")); ?></option>
                                         
                                     </select>
                                 </div>
 
                                 <div class="form-group col-lg-2">
                                     <select id="city_select" name="city" class="form-control">
-                                        <option value=""><?php echo e(__("Select City")); ?></option>
+                                        <option value=""><?php echo e(__(" City")); ?></option>
                                         
                                     </select>
                                 </div>
 
                                 <!-- Form Group -->
-                                <div class="form-group col-lg-2 col-md-12 col-sm-12 btn-box">
+                                <div class="form-group col-lg-3 col-md-12 col-sm-12 btn-box">
                                     <button type="submit" class="theme-btn btn-style-seven"><span class="btn-title"><?php echo e(__("Find Jobs")); ?></span></button>
                                 </div>
                             </div>

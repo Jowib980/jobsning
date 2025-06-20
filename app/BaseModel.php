@@ -412,7 +412,6 @@ class BaseModel extends Model
                 if( $company_id ) $q->where('company_id', $company_id);
             })->count();
 
-
             $res[] = [
                 'size'   => 6,
                 'size_md'=>3,

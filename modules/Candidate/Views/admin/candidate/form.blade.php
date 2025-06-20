@@ -120,16 +120,3 @@
         </div>
     </div>
 
-
-
-
-@section ('script.body')
-    {!! App\Helpers\MapEngine::scripts() !!}
-<script>
-    $(document).ready(function() {
-        $(document).ready(function() {
-            $('#languages').select2();
-        });
-    });
-</script>
-@endsection

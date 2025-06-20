@@ -321,9 +321,6 @@ class JobController extends AdminController
 
     public function bulkEdit(Request $request)
     {
-        if(!is_admin() and !auth()->user()->checkJobPlan()){
-            return redirect(route('plan'));
-        }
         $this->checkPermission('job_manage');
         $ids = $request->input('ids');
         $action = $request->input('action');
@@ -334,6 +331,9 @@ class JobController extends AdminController
             return redirect()->back()->with('error', __('Please select an action!'));
         }
         if ($action == "delete") {
+             if(!is_admin()){
+                return redirect()->back()->with('error', __('You are not allowed to delete the job!'));
+            }
             foreach ($ids as $id) {
                 $query = Job::where("id", $id);
                 if (!$this->hasPermission('job_manage_others')) {
