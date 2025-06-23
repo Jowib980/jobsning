@@ -89,7 +89,7 @@
                                             <td> {{ $row->phone}}</td>
                                             <td> {{ display_date($row->updated_at)}}</td>
                                             <td><span class="badge badge-{{ $row->status }}">{{ $row->status }}</span></td>
-                                            <td><span class="badge badge-{{ $row->candidate->allow_search == 'publish' ? 'active' : 'warning' }}">{{ $row->candidate->allow_search == 'publish' ? __('Publish') : __('Hide') }}</span></td>
+                                            <td><span class="badge badge-{{ $row->candidate && $row->candidate->allow_search == 'publish' ? 'active' : 'warning' }}">{{ $row->candidate && $row->candidate->allow_search == 'publish' ? __('Publish') : __('Hide') }}</span></td>
                                             <td>
                                                 <a href="{{route('user.admin.detail',['id'=>$row->id])}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> {{__('Edit')}}</a>
                                             </td>
