@@ -26,6 +26,7 @@ class PlanController extends FrontendController
             'plans'=>$role->plans,
             'user'=>auth()->user(),
         ];
+
         return view("User::frontend.plan.index",$data);
     }
 
@@ -41,57 +42,113 @@ class PlanController extends FrontendController
         return view("User::frontend.plan.my-plan",$data);
     }
 
-    public function buy(Request $request,$id){
+    public function buy(Request $request, $id)
+    {
         $plan = Plan::find($id);
-        if(!$plan) return;
+        if (!$plan) return;
 
         $user = auth()->user();
-
         $plan_page = route('plan');
         $my_plan = route('user.plan');
 
-        if($user->role_id != $plan->role_id){
-            return redirect()->to($plan_page)->with("warning",__("Please select other plan"));
+        if ($user->role_id != $plan->role_id) {
+            return redirect()->to($plan_page)->with("warning", __("Please select other plan"));
         }
 
-        $user_plan = $user->user_plan;
-//        if($user_plan and $user_plan->plan_id == $plan->id and $user_plan->is_valid){
-//            return redirect()->to($plan_page)->with("warning",__("Please select other plan"));
-//        }
+        $currency = strtolower($request->query('currency', 'inr')); // default to INR
+        $isAnnual = $request->query('annual');
 
-        if($request->query('annual') and !$plan->annual_price){
-            return redirect()->to($plan_page)->with("warning",__("This plan doesn't have annual pricing"));
+        // Build dynamic price key
+        $priceKey = $isAnnual ? "annual_price_{$currency}" : "price_{$currency}";
+
+        // Price value based on currency
+        $price = $plan->{$priceKey} ?? null;
+
+        // If no price defined for this currency, fallback or warn
+        if ($price === null) {
+            return redirect()->to($plan_page)->with("warning", __("This plan is not available in selected currency."));
         }
 
-        // For Annual price
-        if($request->query('annual')){
-            CartManager::clear();
-            CartManager::add($plan,$plan->title,1,$plan->annual_price,['annual'=>1]);
-            return redirect('checkout');
-        }
-
-        // For Normal Price
-        if(!$plan->price || $plan->price == 0)
-        {
-            // For Free
+        // Handle FREE plan
+        if ($price == 0 || !$price) {
             $new_user_plan = UserPlan::query()->find($user->id);
-            if(empty($new_user_plan)){
+            if (empty($new_user_plan)) {
                 $new_user_plan = new UserPlan();
                 $new_user_plan->id = $user->id;
             }
             $new_user_plan->plan_id = $id;
-            $new_user_plan->price = $plan->price;
-            $new_user_plan->start_date = date('Y-m-d H:i:s');
-            $new_user_plan->end_date = date('Y-m-d H:i:s',strtotime('+ '.$plan->duration.' '.$plan->duration_type));
+            $new_user_plan->price = $price;
+            $new_user_plan->start_date = now();
+            $new_user_plan->end_date = now()->add($plan->duration, $plan->duration_type);
             $new_user_plan->max_service = $plan->max_service;
             $new_user_plan->plan_data = $plan;
             $new_user_plan->save();
+
             return redirect()->to($my_plan)->with('success', __("Purchased user package successfully"));
-        }else{
-            CartManager::clear();
-            CartManager::add($plan);
-            return redirect('checkout');
         }
 
+        // Paid Plan: Add to cart with selected currency
+        CartManager::clear();
+        CartManager::add($plan, $plan->title, 1, $price, [
+            'currency' => $currency,
+            'annual' => $isAnnual ? 1 : 0
+        ]);
+
+        return redirect('checkout');
     }
+
+
+    // public function buy(Request $request,$id){
+    //     $plan = Plan::find($id);
+    //     if(!$plan) return;
+
+    //     $user = auth()->user();
+
+    //     $plan_page = route('plan');
+    //     $my_plan = route('user.plan');
+
+    //     if($user->role_id != $plan->role_id){
+    //         return redirect()->to($plan_page)->with("warning",__("Please select other plan"));
+    //     }
+
+    //     $user_plan = $user->user_plan;
+    //     //        if($user_plan and $user_plan->plan_id == $plan->id and $user_plan->is_valid){
+    //     //            return redirect()->to($plan_page)->with("warning",__("Please select other plan"));
+    //     //        }
+
+    //     if($request->query('annual') and !$plan->annual_price){
+    //         return redirect()->to($plan_page)->with("warning",__("This plan doesn't have annual pricing"));
+    //     }
+
+    //     // For Annual price
+    //     if($request->query('annual')){
+    //         CartManager::clear();
+    //         CartManager::add($plan,$plan->title,1,$plan->annual_price,['annual'=>1]);
+    //         return redirect('checkout');
+    //     }
+
+    //     // For Normal Price
+    //     if(!$plan->price || $plan->price == 0)
+    //     {
+    //         // For Free
+    //         $new_user_plan = UserPlan::query()->find($user->id);
+    //         if(empty($new_user_plan)){
+    //             $new_user_plan = new UserPlan();
+    //             $new_user_plan->id = $user->id;
+    //         }
+    //         $new_user_plan->plan_id = $id;
+    //         $new_user_plan->price = $plan->price;
+    //         $new_user_plan->start_date = date('Y-m-d H:i:s');
+    //         $new_user_plan->end_date = date('Y-m-d H:i:s',strtotime('+ '.$plan->duration.' '.$plan->duration_type));
+    //         $new_user_plan->max_service = $plan->max_service;
+    //         $new_user_plan->plan_data = $plan;
+    //         $new_user_plan->save();
+    //         return redirect()->to($my_plan)->with('success', __("Purchased user package successfully"));
+    //     }else{
+    //         CartManager::clear();
+    //         CartManager::add($plan);
+    //         return redirect('checkout');
+    //     }
+
+    // }
 }

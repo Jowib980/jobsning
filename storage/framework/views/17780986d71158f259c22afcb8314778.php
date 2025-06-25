@@ -1,0 +1,47 @@
+<div class="form-group">
+    <label> <?php echo e(__('Name')); ?></label>
+    <input type="text" value="<?php echo e($translation->name); ?>" placeholder="Category name" name="name" class="form-control">
+</div>
+<?php if(is_default_lang()): ?>
+<div class="form-group">
+    <label> <?php echo e(__('Parent')); ?></label>
+    <select name="parent_id" class="form-control">
+        <option value=""> <?php echo e(__('-- Please Select --')); ?></option>
+        <?php
+        $traverse = function ($categories, $prefix = '') use (&$traverse, $row) {
+            foreach ($categories as $category) {
+                if ($category->id == $row->id) {
+                    continue;
+                }
+                $selected = '';
+                if ($row->parent_id == $category->id)
+                    $selected = 'selected';
+                printf("<option value='%s' %s>%s</option>", $category->id, $selected, $prefix . ' ' . $category->name);
+                $traverse($category->children, $prefix . '-');
+            }
+        };
+        $traverse($parents);
+        ?>
+    </select>
+</div>
+<div class="form-group">
+    <label> <?php echo e(__('Slug')); ?></label>
+    <input type="text" value="<?php echo e($row->slug); ?>" placeholder="Category slug" name="slug" class="form-control">
+</div>
+<div class="form-group">
+    <label> <?php echo e(__('Icon Class')); ?></label>
+    <input type="text" value="<?php echo e($row->icon); ?>" placeholder="Icon Class" name="icon" class="form-control">
+</div>
+
+<div class="form-group">
+    <div class="panel-title"><strong><?php echo e(__('Feature Image')); ?></strong></div>
+        <div class="panel-body">
+            <div class="form-group">
+                <?php echo \Modules\Media\Helpers\FileHelper::fieldUpload('thumbnail_id',old('thumbnail_id', $row->thumbnail_id)); ?>
+
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php /**PATH C:\xampp\htdocs\jobsning\modules/Job/Views/admin/category/form.blade.php ENDPATH**/ ?>

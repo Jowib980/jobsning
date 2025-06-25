@@ -90,7 +90,7 @@
                                             <td> <?php echo e($row->phone); ?></td>
                                             <td> <?php echo e(display_date($row->updated_at)); ?></td>
                                             <td><span class="badge badge-<?php echo e($row->status); ?>"><?php echo e($row->status); ?></span></td>
-                                            <td><span class="badge badge-<?php echo e($row->candidate->allow_search == 'publish' ? 'active' : 'warning'); ?>"><?php echo e($row->candidate->allow_search == 'publish' ? __('Publish') : __('Hide')); ?></span></td>
+                                            <td><span class="badge badge-<?php echo e($row->candidate && $row->candidate->allow_search == 'publish' ? 'active' : 'warning'); ?>"><?php echo e($row->candidate && $row->candidate->allow_search == 'publish' ? __('Publish') : __('Hide')); ?></span></td>
                                             <td>
                                                 <a href="<?php echo e(route('user.admin.detail',['id'=>$row->id])); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> <?php echo e(__('Edit')); ?></a>
                                             </td>

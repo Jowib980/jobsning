@@ -41,6 +41,7 @@
                 }
 
                 $body = $this->replaceContentEmail($data, setting_item_with_lang('content_email_change_applicants_status',app()->getLocale()));
+            
                 Mail::to($user->email)->send(new ChangeApplicantsStatusEmail($body));
 
                 if(!empty($old)){

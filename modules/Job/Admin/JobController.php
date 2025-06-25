@@ -265,9 +265,15 @@ class JobController extends AdminController
             $row->expiration_date = \Carbon\Carbon::now()->addWeek()->toDateString();
         }
 
-        if(empty($request->input('thumbnail_id'))) {
-            $row->thumbnail_id = "519";
+        if (empty($request->input('thumbnail_id'))) {
+            $category = \DB::table('bc_job_categories')->where('id', $request->input('category_id'))->first();
+            if ($category && !empty($category->thumbnail_id)) {
+                $row->thumbnail_id = $category->thumbnail_id;
+            } else {
+                $row->thumbnail_id = 519;
+            }
         }
+
 
         $res = $row->saveOriginOrTranslation($request->query('lang'),true);
         $row->skills()->sync($request->input('job_skills') ?? []);
@@ -422,11 +428,13 @@ class JobController extends AdminController
         if (empty($row)){
             return redirect()->back()->with('error', __('Item not found!'));
         }
+
         $old_status = $row->status;
         if($status != 'approved' && $status != 'rejected' && $status != 'hired'){
             return redirect()->back()->with('error', __('Status unavailable'));
         }
         $row->status = $status;
+
         $row->save();
         //Send Notify and email
         if($old_status != $status) {
@@ -617,7 +625,7 @@ class JobController extends AdminController
         if( $candidate_id && $this->hasPermission('job_manage_others')){
             $rows->where('candidate_id', $candidate_id);
         }
-        
+
         $rows = $rows->orderBy('id', 'desc')
             ->paginate(20);
 

@@ -78,7 +78,13 @@ class JobCategoryController extends AdminController
             $row->status = "publish";
         }
 
-        $row->fill($request->input());
+        
+        $attrs = ['name', 'status', 'thumbnail_id', 'slug', 'lang'];
+        $row->fill($request->only($attrs));
+
+        if (empty($row->slug) && $request->filled('name')) {
+            $row->slug = \Str::slug($request->input('name'));
+        }
         $res = $row->saveOriginOrTranslation($request->input('lang'));
 
         if ($res) {

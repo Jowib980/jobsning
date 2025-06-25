@@ -116,6 +116,10 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <a href="/candidate/{{ $row->candidateInfo->slug }}" target="_blank">View Full Application</a>
+                            <!-- <div class="">
+                                <a class="dropdown-item" href="{{ route('job.admin.applicants.changeStatus', ['status' => 'hired', 'id' => $row->id]) }}"><button class="btn btn-info">Hired</button></a>
+                                <a class="dropdown-item" href="{{ route('job.admin.applicants.changeStatus', ['status' => 'rejected', 'id' => $row->id]) }}"><button class="btn btn-danger">Not Interested</button></a>
+                            </div> -->
                         </div>
                     </div>
                 </div>

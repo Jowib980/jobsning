@@ -1,3 +1,36 @@
+<style>
+.currency-toggle {
+    display: flex;
+    gap: 6px;
+}
+.currency-toggle label {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    text-align: center;
+    flex: 1;
+    user-select: none;
+}
+.currency-toggle input[type="radio"] {
+    display: none;
+}
+
+.currency-option.selected {
+    background-color: #e7e7e7 !important;
+    color: white;
+    border-color: #007bff;
+}
+.price-value {
+    color: black;
+}
+label.btn.btn-outline-primary.currency-option:hover {
+    background-color: #e2e2e2;
+}
+
+</style>
+
+
 <div class="sec-title text-center">
     <h2>{{ setting_item_with_lang('user_plans_page_title', app()->getLocale()) ?? __("Pricing Packages")}}</h2>
     <div class="text">{{ setting_item_with_lang('user_plans_page_sub_title', app()->getLocale()) ?? __("Choose your pricing plan") }}</div>
@@ -15,6 +48,16 @@
             <div class="content">
                 <div class="row">
                     @foreach($plans as $plan)
+                        @php 
+                            $currency = request('currency') ?? 'inr';
+                            $price = $plan->getCurrencyPrice($currency, false);
+                            $annualPrice = $plan->getCurrencyPrice($currency, true); // Annual
+                            $currencySymbol = [
+                                'inr' => '₹',
+                                'usd' => '$',
+                                'eur' => '€'
+                            ][$currency] ?? '$';
+                        @endphp
                         @php
                             $translate = $plan->translateOrOrigin(app()->getLocale());
                         @endphp
@@ -24,11 +67,37 @@
                                     <span class="tag">{{__('Recommended')}}</span>
                                 @endif
                                 <div class="title">{{$translate->title}}</div>
+
+                                <div class="btn-group currency-toggle" role="group" aria-label="Currency selector">
+                                    @php
+                                        $dur = $plan->duration . ' ' . $plan->duration_type_text;
+                                        $prices = [
+                                            'inr' => ['symbol' => '₹', 'value' => $plan->price_inr],
+                                            'usd' => ['symbol' => '$', 'value' => $plan->price_usd],
+                                            'eur' => ['symbol' => '€', 'value' => $plan->price_eur],
+                                        ];
+                                    @endphp
+
+                                    @foreach($prices as $key => $data)
+                                        <label class="btn btn-outline-primary currency-option">
+                                            <input type="radio" name="currency_{{ $plan->id }}" value="{{ $key }}" autocomplete="off" {{ $loop->first ? 'checked' : '' }}>
+                                            <span class="price-value">
+                                                {{ $data['symbol'] }} {{ number_format($data['value'], 2) }}<br>
+                                                <small>/ {{ $dur }}</small>
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                                <form id="currency-form-{{ $plan->id }}" method="GET" action="{{ route('user.plan.buy', ['id' => $plan->id]) }}">
+                                    <input type="hidden" name="currency" id="selected-currency-{{ $plan->id }}" value="inr">
+                                </form>
+<!-- 
                                 <div class="price">{{$plan->price ? format_money($plan->price) : __('Free')}}
                                     @if($plan->price)
                                     <span class="duration">/ {{$plan->duration > 1 ? $plan->duration : ''}} {{$plan->duration_type_text}}</span>
                                     @endif
-                                </div>
+                                </div> -->
                                 <div class="table-content">
                                     {!! clean($translate->content) !!}
                                 </div>
@@ -45,7 +114,10 @@
                                             <a href="{{route('user.plan.buy',['id'=>$plan->id])}}" class="theme-btn btn-style-two">{{__('Repurchase')}}</a>
                                         @endif
                                     @else
-                                        <a href="{{route('user.plan.buy',['id'=>$plan->id])}}" class="theme-btn btn-style-three">{{__('Select')}}</a>
+                                        <a href="#" onclick="event.preventDefault(); submitCurrency({{ $plan->id }});" class="theme-btn btn-style-three">
+                                            {{ __('Select') }}
+                                        </a>
+
                                     @endif
                                 </div>
                             </div>
@@ -93,3 +165,28 @@
         </div>
     </div>
 </div>
+
+
+<script>
+function submitCurrency(planId) {
+    const selectedCurrency = document.querySelector('input[name="currency_' + planId + '"]:checked');
+    if (selectedCurrency) {
+        document.getElementById('selected-currency-' + planId).value = selectedCurrency.value;
+        document.getElementById('currency-form-' + planId).submit();
+    }
+}
+
+// Highlight selected currency visually
+document.querySelectorAll('.currency-toggle input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+        const all = this.closest('.currency-toggle').querySelectorAll('.currency-option');
+        all.forEach(label => label.classList.remove('selected'));
+        this.closest('label').classList.add('selected');
+    });
+
+    // Initialize default selection
+    if (radio.checked) {
+        radio.closest('label').classList.add('selected');
+    }
+});
+</script>

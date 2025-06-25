@@ -16,10 +16,31 @@ $countUnread = $checkNotify->where('read_at', null)->count();
 
 $languages = \Modules\Language\Models\Language::getActive();
 $locale = App::getLocale();
+
+$header_class = $header_style = $row->header_style ?? 'normal';
+$logo_id = setting_item("logo_id");
+if($header_style == 'header-style-two'){
+    $logo_id = setting_item('logo_white_id');
+}
+if(empty($is_home) && $header_style == 'normal' && empty($disable_header_shadow)){
+    $header_class .= ' header-shaddow';
+}
+
+
 ?>
 
 <div class="header-logo flex-shrink-0">
-    <h3 class="logo-text"><a href="<?php echo e(url('/admin')); ?>"><?php echo e(__('Superio')); ?> <span class="app-version"><?php echo e(config('app.version')); ?></span></a></h3>
+        <?php if($logo_id): ?>
+            <?php $logo = get_file_url($logo_id,'full') ?>
+            <div class="logo-text px-4">
+                <img src="<?php echo e($logo); ?>" alt="<?php echo e(setting_item("site_title")); ?>" style="width: 100%;">
+            </div>
+        <?php else: ?>
+        <div class="logo-text">
+            <img src="<?php echo e(asset('/images/logo.svg')); ?>" alt="logo">
+        </div>
+        <?php endif; ?>
+    </a>
 </div>
 <div class="header-widgets d-flex flex-grow-1">
     <div class="widgets-left d-flex flex-grow-1 align-items-center">

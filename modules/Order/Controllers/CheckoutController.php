@@ -97,11 +97,23 @@
 
             $order->addMeta('locale',app()->getLocale());
 
+            // Safely extract the currency from the first item in the order
+            $currency = 'INR'; // Default fallback
+            if ($order->items->count()) {
+                $meta = $order->items->first()->meta ?? [];
+                if (!empty($meta['currency'])) {
+                    $currency = strtoupper($meta['currency']); // ensure PayPal-compatible uppercase
+                }
+            }
+
             $payment = new Payment();
             $payment->object_id = $order->id;
             $payment->object_model = 'order';
             $payment->amount = $order->total;
-            $payment->currency = Currency::getCurrent();
+
+            $payment->currency = $currency;
+            // dd($payment->currency);
+
             $payment->gateway = $payment_gateway;
             $payment->save();
 

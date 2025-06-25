@@ -72,6 +72,7 @@ class BookingController extends \App\Http\Controllers\Controller
             'user'       => Auth::user(),
             'is_api'    =>  $is_api
         ];
+        
         return view('Booking::frontend/checkout', $data);
     }
 

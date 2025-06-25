@@ -32,4 +32,14 @@
     <label> {{ __('Icon Class')}}</label>
     <input type="text" value="{{$row->icon}}" placeholder="Icon Class" name="icon" class="form-control">
 </div>
+
+<div class="form-group">
+    <div class="panel-title"><strong>{{__('Feature Image')}}</strong></div>
+        <div class="panel-body">
+            <div class="form-group">
+                {!! \Modules\Media\Helpers\FileHelper::fieldUpload('thumbnail_id',old('thumbnail_id', $row->thumbnail_id)) !!}
+            </div>
+        </div>
+    </div>
 @endif
+

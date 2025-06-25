@@ -15,7 +15,8 @@ class JobCategory extends BaseModel
         'content',
         'status',
         'parent_id',
-        'icon'
+        'icon',
+        'thumbnail_id',
     ];
     protected $slugField     = 'slug';
     protected $slugFromField = 'name';
@@ -48,5 +49,17 @@ class JobCategory extends BaseModel
     public function openJobs(){
         return $this->hasMany(Job::class, 'category_id', 'id')
             ->where('expiration_date', '>=',  date('Y-m-d H:s:i'));
+    }
+
+    public function getThumbnailUrl(){
+        if(!empty($this->thumbnail_id)){
+            return FileHelper::url($this->thumbnail_id);
+        }elseif(!empty($this->company) && $this->company->avatar_id){
+            return FileHelper::url($this->company->avatar_id);
+        }elseif(!empty($this->user)){
+            return $this->user->getAvatarUrl();
+        }else{
+            return false;
+        }
     }
 }

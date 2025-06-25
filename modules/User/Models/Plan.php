@@ -65,4 +65,14 @@ class Plan extends Bookable
     public function role(){
         return $this->belongsTo(Role::class,'role_id');
     }
+
+    public function getCurrencyPrice($currency = 'inr', $isAnnual = false) {
+        $currency = strtolower($currency);
+        if($isAnnual) {
+            return $this->{'annual_price_' . $currency} ?? null;
+        }
+        return $this->{'price_' . $currency} ?? null;
+    }
+
+
 }
